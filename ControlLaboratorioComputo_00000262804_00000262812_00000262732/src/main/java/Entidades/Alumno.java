@@ -15,17 +15,19 @@ public class Alumno {
     private String apellidoMaterno;
     private boolean estatus;
     private String contrasenia;
+    private Integer idCarrera;
 
     public Alumno() {
     }
 
-    public Alumno(Integer idAlumno, String nombres, String apellidoPaterno, String apellidoMaterno, boolean estatus, String contrasenia) {
+    public Alumno(Integer idAlumno, String nombres, String apellidoPaterno, String apellidoMaterno, boolean estatus, String contrasenia, Integer idCarrera) {
         this.idAlumno = idAlumno;
         this.nombres = nombres;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
         this.estatus = estatus;
         this.contrasenia = contrasenia;
+        this.idCarrera = idCarrera;
     }
 
     public Integer getIdAlumno() {
@@ -75,6 +77,16 @@ public class Alumno {
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
+
+    public Integer getIdCarrera() {
+        return idCarrera;
+    }
+
+    public void setIdCarrera(Integer idCarrera) {
+        this.idCarrera = idCarrera;
+    }
+    
+    
     
     
 }
