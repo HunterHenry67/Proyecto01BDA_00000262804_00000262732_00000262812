@@ -4,10 +4,18 @@
  */
 package Entidades;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Home
  */
 public class Reserva {
-    
+    private Integer idReserva;
+    private LocalDateTime fechaHoraApartado;
+    private LocalDateTime fechaHoraInicio;
+    private LocalDateTime fechaHoraFinal;
+    private Integer tiempoRestante;
+    private Integer idAlumno;
+    private Integer idComputadora;
 }

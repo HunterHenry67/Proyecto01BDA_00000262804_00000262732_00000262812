@@ -15,15 +15,17 @@ public class CentroComputo {
     private Time HoraInicio;
     private Time HOranFin;
     private String contraseniaMaestra;
+    private Integer idUnidadAcademica;
 
     public CentroComputo() {
     }
 
-    public CentroComputo(Integer idCentroComputo, Time HoraInicio, Time HOranFin, String contraseniaMaestra) {
+    public CentroComputo(Integer idCentroComputo, Time HoraInicio, Time HOranFin, String contraseniaMaestra, Integer idUnidadAcademica) {
         this.idCentroComputo = idCentroComputo;
         this.HoraInicio = HoraInicio;
         this.HOranFin = HOranFin;
         this.contraseniaMaestra = contraseniaMaestra;
+        this.idUnidadAcademica = idUnidadAcademica;
     }
 
     public Integer getIdCentroComputo() {
@@ -57,6 +59,12 @@ public class CentroComputo {
     public void setContraseniaMaestra(String contraseniaMaestra) {
         this.contraseniaMaestra = contraseniaMaestra;
     }
-    
-    
+
+    public Integer getIdUnidadAcademica() {
+        return idUnidadAcademica;
+    }
+
+    public void setIdUnidadAcademica(Integer idUnidadAcademica) {
+        this.idUnidadAcademica = idUnidadAcademica;
+    }
 }
