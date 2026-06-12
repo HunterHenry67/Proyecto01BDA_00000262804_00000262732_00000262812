@@ -12,4 +12,5 @@ public class UnidadAcademica {
     private Integer idUnidadAcademica;
     private String nombre;
     
+    
 }
