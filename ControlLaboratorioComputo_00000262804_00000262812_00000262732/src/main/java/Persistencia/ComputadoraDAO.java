@@ -5,6 +5,7 @@
 package Persistencia;
 
 import Dtos.ComputadoraDTO;
+import Entidades.Computadora;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,21 +17,25 @@ import java.sql.SQLException;
  */
 public class ComputadoraDAO implements IComputadoraDAO{
 
-    private final ConexionBD conexion = new ConexionBD();
+    private IConexionBD conexion;
+    
+    public ComputadoraDAO(IConexionBD conexion){
+        this.conexion = conexion;
+    }
     
     @Override
-    public ComputadoraDTO obtenerPCPorIP(String ip) {
+    public Computadora obtenerPCPorIP(String ip) throws PersistenciaException{
         String sql = "SELECT c.*, cc.Nombre AS CentroNombre FROM COMPUTADORA c "
                    + "JOIN CENTROCOMPUTO cc ON c.IDCentroComputo = cc.IDCentroComputo "
                    + "WHERE c.DireccionIP = ?";
         
-        try (Connection conn = conexion.crearConexion();
+        try (Connection conn = this.conexion.crearConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, ip);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    ComputadoraDTO pc = new ComputadoraDTO();
+                    Computadora pc = new Computadora();
                     pc.setIdComputadora(rs.getInt("IDComputadora"));
                     pc.setNumeroMaquina(rs.getInt("NumeroMaquina"));
                     pc.setDireccionIP(rs.getString("DireccionIP"));
