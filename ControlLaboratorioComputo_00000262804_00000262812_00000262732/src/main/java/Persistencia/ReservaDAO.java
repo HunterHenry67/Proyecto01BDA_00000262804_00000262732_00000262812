@@ -66,7 +66,7 @@ public class ReservaDAO implements IReservaDAO{
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error en ReservaDAO.obtenerReservaActiva: " + e.getMessage());
+            throw new PersistenciaException("Error al consultar reservas activas por computadora: " + e.getMessage());
         }
         return null;
     }
