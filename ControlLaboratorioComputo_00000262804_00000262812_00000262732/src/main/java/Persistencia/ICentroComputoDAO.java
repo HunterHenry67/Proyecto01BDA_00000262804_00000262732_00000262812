@@ -12,9 +12,14 @@ import Entidades.CentroComputo;
  */
 public interface ICentroComputoDAO {
 
-    CentroComputo consultarPorID(ConsultarCentroComputoDTO ) throws PersistenciaException;
-    CentroComputo consultarPorMaquina(ConsultarMaquinaCentroComputoDTO ) throws PersistenciaException;
-    CentroComputo consultarPorNombre(ConsultarAlumnoCentroComputoDTO) throws PersistenciaException;
+    CentroComputo consultarPorID(ConsultarCentroComputoDTO centro) throws PersistenciaException;
+    CentroComputo consultarPorMaquina(ConsultarMaquinaCentroComputoDTO maquina) throws PersistenciaException;
+    CentroComputo consultarPorNombre(ConsultarAlumnoCentroComputoDTO nombre) throws PersistenciaException;
+    CentroComputo consultarPorCarrera(ConsultarCarreraCentroComputoDTO carrera) throws PersistenciaException;
+    CentroComputo consultarPorUnidadAcademica(ConsultarUnidadAcademicaDTO unidadAcaademica) throws PersistenciaException;
+    CentroComputo consultarPorCentroComputo(ConsultarCentroComputoDTO centroComputo) throws PersistenciaException;
+    CentroComputo consultarPorHoraApartado(ConsultarHoraApartadoDTO horaApartado) throws PersistenciaException;
+    
     
     
 }
