@@ -4,10 +4,24 @@
  */
 package Persistencia;
 
+import Entidades.Alumno;
+import java.util.List;
+
 /**
  *
  * @author BALAMRUSH
  */
 public interface IAlumnoDAO {
-    public boolean validarCredenciales(int idAlumno, String contrasena);
+
+    List<Alumno> consultar(String filtro) throws PersistenciaException;
+
+    Alumno consultarAlumnoPorID(int idAlumno) throws PersistenciaException;
+
+    boolean estaBloqueado(int idAlumno) throws PersistenciaException;
+
+    void bloquearAlumno(int idAlumno) throws PersistenciaException;
+
+    void desbloquearAlumno(int idAlumno) throws PersistenciaException;
+
+    boolean validarCredenciales(int idAlumno, String contrasena) throws PersistenciaException;
 }
