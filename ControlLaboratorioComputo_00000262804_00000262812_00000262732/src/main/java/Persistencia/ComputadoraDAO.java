@@ -5,24 +5,31 @@
 package Persistencia;
 
 import Dtos.ComputadoraDTO;
+import Dtos.ObtenerCatalogoSoftwareDTO;
 import Entidades.Computadora;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
  * @author BALAMRUSH
  */
-public class ComputadoraDAO implements IComputadoraDAO{
+public class ComputadoraDAO implements IComputadoraDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(UnidadAcademicaDAO.class.getName());
 
     private IConexionBD conexion;
-    
-    public ComputadoraDAO(IConexionBD conexion){
+
+    public ComputadoraDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-    
+
+    /*
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException{
         String sql = "SELECT c.*, cc.Nombre AS CentroNombre FROM COMPUTADORA c "
@@ -51,12 +58,11 @@ public class ComputadoraDAO implements IComputadoraDAO{
         }
         return null;
     }
+     */
 
     @Override
-    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
+    public Computadora obtenerPCPorIP(String ip) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    
 
 }
