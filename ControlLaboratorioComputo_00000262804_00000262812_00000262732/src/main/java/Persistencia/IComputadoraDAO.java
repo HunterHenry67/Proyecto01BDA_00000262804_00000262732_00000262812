@@ -4,7 +4,9 @@
  */
 package Persistencia;
 
+import Dtos.ObtenerCatalogoSoftwareDTO;
 import Entidades.Computadora;
+import java.util.List;
 
 /**
  *
@@ -12,4 +14,6 @@ import Entidades.Computadora;
  */
 public interface IComputadoraDAO {
     Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
+    List<Computadora> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException;
+    
 }
