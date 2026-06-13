@@ -123,21 +123,23 @@ public class AlumnoDAO implements IAlumnoDAO {
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
         try(Connection conexion = this.conexion.crearConexion()){
             String comandoSQL = """
-                                
+                                SELECT COUNT(*) AS total
+                                    FROM bloqueo
+                                    WHERE idAlumno = ?
+                                      AND estatus = TRUE;
                                 """;
+            PreparedStatement statment = conexion.prepareStatement(comandoSQL);
+            statment.setInt(1, idAlumno);
+            ResultSet resultado = statment.executeQuery();
+            
+            if(resultado.next()){
+                int total = resultado.getInt("total");
+                return total > 0;
+            }
+            return false;
         }catch(SQLException ex){
             LOGGER.severe(ex.getMessage());
             throw new PersistenciaException("Error al identificar si el alumno está bloqueado: "+ex.getMessage());
         }
-    }
-
-    @Override
-    public void bloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
