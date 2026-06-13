@@ -45,7 +45,13 @@ public class ReservaDAO implements IReservaDAO{
 
     @Override
     public Reserva registrarReserva(Reserva reserva) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try{
+            String comandoSQL = """
+                                INSERT INTO resevas
+                                """;
+        }catch(SQLException ex){
+            throw new PersistenciaException("Error al registrar la Reserva: "+ex.getMessage());          
+        }
     }
 
     @Override
@@ -144,6 +150,21 @@ public class ReservaDAO implements IReservaDAO{
     @Override
     public List<Reserva> consultarReservasActivas() throws PersistenciaException {
         
+    }
+
+    @Override
+    public void finalizarReserva(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void cancelarReserva(int idReserva) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int consultarMinutosUsadosPorAlumno(int idAlumno) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
