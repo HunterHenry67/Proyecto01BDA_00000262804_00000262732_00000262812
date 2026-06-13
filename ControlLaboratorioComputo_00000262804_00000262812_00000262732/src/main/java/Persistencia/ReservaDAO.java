@@ -20,13 +20,23 @@ public class ReservaDAO implements IReservaDAO{
 
     @Override
     public ReservaDTO obtenerReservaActiva(int idComputadora) {
-        String sql = "SELECT r.*, CONCAT(a.Nombre, ' ', a.ApellidoPaterno) AS AlumnoNombre "
-                   + "FROM RESERVA r "
-                   + "JOIN ALUMNO a ON r.IDAlumno = a.IDAlumno "
-                   + "WHERE r.IDComputadora = ? AND r.fechaHoraFinal IS NULL";
+        String comandoSQL = """
+            SELECT r.idReserva,
+                   r.fechaHoraApartado,
+                   r.fechaHoraInicio,
+                   r.fechaHoraFinal,
+                   r.tiempoUso,
+                   r.idAlumno,
+                   r.idComputadora,
+                   CONCAT(a.nombre, ' ', a.apellidoPaterno) AS alumnoNombre
+            FROM reserva r
+            JOIN alumno a ON r.idAlumno = a.idAlumno
+            WHERE r.idComputadora = ?
+              AND r.fechaHoraFinal IS NULL
+            """;
         
         try (Connection conn = conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
             
             ps.setInt(1, idComputadora);
             try (ResultSet rs = ps.executeQuery()) {
@@ -36,7 +46,7 @@ public class ReservaDAO implements IReservaDAO{
                     reserva.setFechaHoraApartado(rs.getTimestamp("fechaHoraApartado"));
                     reserva.setIdAlumno(rs.getInt("idAlumno")); 
                     reserva.setIdComputadora(rs.getInt("idComputadora"));
-                    reserva.setNombreAlumno(rs.getString("AlumnoNombre")); // Atributo auxiliar
+                    reserva.setNombreAlumno(rs.getString("alumnoNombre")); // Atributo auxiliar
                     return reserva;
                 }
             }
