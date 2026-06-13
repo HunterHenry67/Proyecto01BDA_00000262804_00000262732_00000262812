@@ -4,6 +4,10 @@
  */
 package PresentacionProgramaBloqueo;
 
+import Dtos.ComputadoraDTO;
+import Dtos.ReservaDTO;
+import Negocio.BloqueadorBO;
+
 /**
  *
  * @author user
@@ -11,20 +15,49 @@ package PresentacionProgramaBloqueo;
 public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PresentaciónProgramaBloqueadorPC.class.getName());
-
+    private int idAlumnoReservaActual = -1;
+    
     /**
      * Creates new form PresentaciónProgramaBloqueadorPC
      */
     public PresentaciónProgramaBloqueadorPC() {
         initComponents();
-        //hacer que ocupe toda la pantalla
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
-        
-        //mantener el bloqueador siempre por encima de cualquier otra ventana
         this.setAlwaysOnTop(true);
-        
-        //centrar la ventana
         this.setLocationRelativeTo(null);
+        
+        inicializarBloqueador();
+    }
+    
+    private void inicializarBloqueador() {
+        String ipLocal = "127.0.0.1"; 
+        try {
+            ipLocal = java.net.InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            System.err.println("Error IP: " + e.getMessage());
+        }
+
+        BloqueadorBO negocio = new BloqueadorBO();
+        ComputadoraDTO pc = negocio.buscarPCPorIP(ipLocal);
+
+        if (pc != null) {
+            lblNumeroPC.setText(String.format("%02d", pc.getNumeroMaquina()));
+            lblLaboratorio.setText("Laboratorio: " + pc.getNombreCentro());
+
+            ReservaDTO reserva = negocio.buscarReservaActiva(pc.getIdComputadora());
+
+            if (reserva != null) {
+                lblEstadoAlumno.setText(reserva.getNombreAlumno().toUpperCase());
+                this.idAlumnoReservaActual = reserva.getIdAlumno(); 
+            } else {
+                lblEstadoAlumno.setText("DISPONIBLE");
+                this.idAlumnoReservaActual = -1; 
+            }
+        } else {
+            lblNumeroPC.setText("??");
+            lblEstadoAlumno.setText("MÁQUINA NO REGISTRADA");
+            this.idAlumnoReservaActual = -1;
+        }
     }
 
     /**
@@ -39,17 +72,18 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        lblNumeroPC = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblEstadoAlumno = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        lblLaboratorio = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        lblTimerContador = new javax.swing.JLabel();
+        lblTextoSegundos = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -80,9 +114,9 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jLabel2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 100)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(204, 0, 51));
-        jLabel2.setText("XX");
+        lblNumeroPC.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 100)); // NOI18N
+        lblNumeroPC.setForeground(new java.awt.Color(204, 0, 51));
+        lblNumeroPC.setText("XX");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -90,22 +124,22 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(71, 71, 71)
-                .addComponent(jLabel2)
+                .addComponent(lblNumeroPC)
                 .addContainerGap(77, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblNumeroPC, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jLabel3.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
         jLabel3.setText("Computadora Apartada Por: ");
 
-        jLabel4.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
-        jLabel4.setText("DISPONIBLE");
+        lblEstadoAlumno.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        lblEstadoAlumno.setText("DISPONIBLE");
 
         jLabel5.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
         jLabel5.setText("INICIA SESIÓN");
@@ -114,7 +148,10 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         jLabel6.setText("Unidad Académica: ITSON Nainari");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setText("Laboratorio: CISCO");
+        jLabel7.setText("Laboratorio:");
+
+        lblLaboratorio.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblLaboratorio.setText("CISCO");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -126,13 +163,17 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblLaboratorio, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -140,24 +181,26 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(84, 84, 84)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(lblLaboratorio))
                 .addGap(0, 89, Short.MAX_VALUE))
         );
 
         jLabel8.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
         jLabel8.setText("Tiempo de Actualización: ");
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel9.setText("30 ");
+        lblTimerContador.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTimerContador.setText("30 ");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel10.setText("segundos");
+        lblTextoSegundos.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTextoSegundos.setText("segundos");
 
         jLabel11.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
         jLabel11.setText("Contraseña:");
@@ -183,9 +226,9 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(102, 102, 102)
-                                .addComponent(jLabel9)
+                                .addComponent(lblTimerContador)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10))
+                                .addComponent(lblTextoSegundos))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel11)
@@ -205,8 +248,8 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel10))
+                    .addComponent(lblTimerContador)
+                    .addComponent(lblTextoSegundos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
@@ -285,20 +328,21 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblEstadoAlumno;
+    private javax.swing.JLabel lblLaboratorio;
+    private javax.swing.JLabel lblNumeroPC;
+    private javax.swing.JLabel lblTextoSegundos;
+    private javax.swing.JLabel lblTimerContador;
     // End of variables declaration//GEN-END:variables
 }
