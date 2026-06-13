@@ -24,6 +24,10 @@ public class AlumnoDAO implements IAlumnoDAO {
     private IConexionBD conexion;
     private Connection transaccion;
 
+    public AlumnoDAO(){
+        
+    }
+    
     public AlumnoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
@@ -64,18 +68,18 @@ public class AlumnoDAO implements IAlumnoDAO {
                                    OR estatus LIKE ?;
                             """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
-            String busquedaFiltro = "%"+ filtro + "%";
+            String busquedaFiltro = "%" + filtro + "%";
             statement.setString(1, busquedaFiltro);
             statement.setString(2, busquedaFiltro);
             ResultSet resultado = statement.executeQuery();
-            if(resultado.next()){
+            if (resultado.next()) {
                 listaAlumnos.add(new Alumno(resultado.getInt("idAlumno"),
-                                            resultado.getString("nombre"),
-                                            resultado.getString("apellidoPaterno"),
-                                            resultado.getString("apellidoPaterno"),
-                                            resultado.getBoolean("estatus"),
-                                            resultado.getString("contrasena"),
-                                            resultado.getInt("idCarrera")));
+                        resultado.getString("nombre"),
+                        resultado.getString("apellidoPaterno"),
+                        resultado.getString("apellidoPaterno"),
+                        resultado.getBoolean("estatus"),
+                        resultado.getString("contrasena"),
+                        resultado.getInt("idCarrera")));
             }
             return listaAlumnos;
         } catch (SQLException ex) {
@@ -86,7 +90,7 @@ public class AlumnoDAO implements IAlumnoDAO {
 
     @Override
     public Alumno consultarAlumnoPorID(int idAlumno) throws PersistenciaException {
-        try(Connection conexion = this.conexion.crearConexion()){
+        try (Connection conexion = this.conexion.crearConexion()) {
             String comandoSQL = """
                                 SELECT 
                                     idAlumno,
@@ -102,32 +106,44 @@ public class AlumnoDAO implements IAlumnoDAO {
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
             ResultSet resultado = statement.executeQuery();
-            
-            if(resultado.next()){
+
+            if (resultado.next()) {
                 return new Alumno(resultado.getInt("idAlumno"),
-                                    resultado.getString("nombre"),
-                                    resultado.getString("apellidoPaterno"),
-                                    resultado.getString("apellidoMaterno"),
-                                    resultado.getBoolean("estatus"),
-                                    resultado.getString("contrasena"),
-                                    resultado.getInt("idCarrera"));    
+                        resultado.getString("nombre"),
+                        resultado.getString("apellidoPaterno"),
+                        resultado.getString("apellidoMaterno"),
+                        resultado.getBoolean("estatus"),
+                        resultado.getString("contrasena"),
+                        resultado.getInt("idCarrera"));
             }
             return null;
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar el alumno por ID: " +ex.getMessage());
+            throw new PersistenciaException("Error al consultar el alumno por ID: " + ex.getMessage());
         }
     }
 
-    @Override
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
-        try(Connection conexion = this.conexion.crearConexion()){
+        try (Connection conexion = this.conexion.crearConexion()) {
             String comandoSQL = """
                                 
+                                SELECT COUNT(*) AS total
+                                    FROM bloqueo
+                                    WHERE idAlumno = ?
+                                      AND estatus = TRUE;
                                 """;
-        }catch(SQLException ex){
+            PreparedStatement statment = conexion.prepareStatement(comandoSQL);
+            statment.setInt(1, idAlumno);
+            ResultSet resultado = statment.executeQuery();
+
+            if (resultado.next()) {
+                int total = resultado.getInt("total");
+                return total > 0;
+            }
+            return false;
+        } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: "+ex.getMessage());
+            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: " + ex.getMessage());
         }
     }
 
