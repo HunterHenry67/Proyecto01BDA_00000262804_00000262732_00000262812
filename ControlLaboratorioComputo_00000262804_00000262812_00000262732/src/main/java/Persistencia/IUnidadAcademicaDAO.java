@@ -15,5 +15,5 @@ public interface IUnidadAcademicaDAO {
 
     UnidadAcademica consultarUnidadAcademicaPorID(Integer idUndadAcademica) throws PersistenciaException;
 
-    List<UnidadAcademica> consultarUnidadesAcademicas() throws PersistenciaException;
+    List<UnidadAcademica> consultarUnidadesAcademicas(String filtro) throws PersistenciaException;
 }
