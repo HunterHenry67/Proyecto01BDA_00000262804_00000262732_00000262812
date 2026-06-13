@@ -44,7 +44,7 @@ public class ConsultarIDAlumnoCentroComputoDTO {
         return nombreAlumno;
     }
 
-    public void setNombre(String nombreAlumno) {
+    public void setNombreAlumno(String nombreAlumno) {
         this.nombreAlumno = nombreAlumno;
     }
 

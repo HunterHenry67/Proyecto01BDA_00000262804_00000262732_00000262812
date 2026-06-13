@@ -43,7 +43,7 @@ public class ConsultarCarreraCentroComputoDTO {
         return nombreAlumno;
     }
 
-    public void setNombre(String nombreAlumno) {
+    public void setNombreAlumno(String nombreAlumno) {
         this.nombreAlumno = nombreAlumno;
     }
 

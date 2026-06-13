@@ -24,7 +24,6 @@ public class ConsultarNombreAlumnoCentroComputoDTO {
     }
 
     
-    
     public String getMaquina() {
         return maquina;
     }
