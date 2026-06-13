@@ -24,48 +24,26 @@ public class AlumnoDAO implements IAlumnoDAO {
     private IConexionBD conexion;
     private Connection transaccion;
 
-    public AlumnoDAO(){
-        
-    }
-    
     public AlumnoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
     @Override
-    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException{
-        try(Connection conexion = this.conexion.crearConexion()){
-            String comandoSQL = """
-                                SELECT idAlumno,
-                                       nombre,
-                                       apellidoPaterno,
-                                       apellidoMaterno,
-                                       estatus,
-                                       contrasena,
-                                       idCarrera
-                                FROM alumno
-                                WHERE idAlumno = ?
-                                    OR contrasena = ?;
-                                """;
-            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
-            statement.setInt(1, idAlumno);
-            statement.setString(2, contrasena);
-            ResultSet resultado = statement.executeQuery();
-            
-            if(resultado.next()){
-                return new Alumno(resultado.getInt("idAlumno"),
-                                  resultado.getString("nombre"),
-                                  resultado.getString("apellidoMaterno"),
-                                  resultado.getString("apellidoPaterno"),
-                                  resultado.getBoolean("estatus"),
-                                  resultado.getString("constrasena"),
-                                  resultado.getInt("idCarrera"));
+    public boolean validarCredenciales(int idAlumno, String contrasena) {
+        String sql = "SELECT idAlumno FROM ALUMNO WHERE idAlumno = ? AND contrasena = ?";
+
+        try (Connection conn = conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idAlumno);
+            ps.setString(2, contrasena);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }
-            return null;
-        }catch(SQLException ex){
-            LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar las credenciales del alumno: " +ex.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Error en AlumnoDAO.validarCredenciales: " + e.getMessage());
         }
+        return false;
     }
 
     @Override
@@ -86,20 +64,18 @@ public class AlumnoDAO implements IAlumnoDAO {
                                    OR estatus LIKE ?;
                             """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
-            String busquedaFiltro = "%" + filtro + "%";
+            String busquedaFiltro = "%"+ filtro + "%";
             statement.setString(1, busquedaFiltro);
             statement.setString(2, busquedaFiltro);
             ResultSet resultado = statement.executeQuery();
-            while (resultado.next()) {
-                listaAlumnos.add(new Alumno(
-                    resultado.getInt("idAlumno"),
-                    resultado.getString("nombre"),
-                    resultado.getString("apellidoPaterno"),
-                    resultado.getString("apellidoMaterno"),  
-                    resultado.getBoolean("estatus"),
-                    resultado.getString("contrasena"),
-                    resultado.getInt("idCarrera")
-                ));
+            if(resultado.next()){
+                listaAlumnos.add(new Alumno(resultado.getInt("idAlumno"),
+                                            resultado.getString("nombre"),
+                                            resultado.getString("apellidoPaterno"),
+                                            resultado.getString("apellidoPaterno"),
+                                            resultado.getBoolean("estatus"),
+                                            resultado.getString("contrasena"),
+                                            resultado.getInt("idCarrera")));
             }
             return listaAlumnos;
         } catch (SQLException ex) {
@@ -110,7 +86,7 @@ public class AlumnoDAO implements IAlumnoDAO {
 
     @Override
     public Alumno consultarAlumnoPorID(int idAlumno) throws PersistenciaException {
-        try (Connection conexion = this.conexion.crearConexion()) {
+        try(Connection conexion = this.conexion.crearConexion()){
             String comandoSQL = """
                                 SELECT 
                                     idAlumno,
@@ -121,48 +97,43 @@ public class AlumnoDAO implements IAlumnoDAO {
                                     contrasena,
                                     idCarrera
                                 FROM alumno
-                                WHERE idAlumno = ?
+                                WHERE idAlumno LIKE ?
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
             ResultSet resultado = statement.executeQuery();
-
-            if (resultado.next()) {
+            
+            if(resultado.next()){
                 return new Alumno(resultado.getInt("idAlumno"),
-                        resultado.getString("nombre"),
-                        resultado.getString("apellidoPaterno"),
-                        resultado.getString("apellidoMaterno"),
-                        resultado.getBoolean("estatus"),
-                        resultado.getString("contrasena"),
-                        resultado.getInt("idCarrera"));
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellidoPaterno"),
+                                    resultado.getString("apellidoMaterno"),
+                                    resultado.getBoolean("estatus"),
+                                    resultado.getString("contrasena"),
+                                    resultado.getInt("idCarrera"));    
             }
             return null;
-        } catch (SQLException ex) {
+        }catch(SQLException ex){
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar el alumno por ID: " + ex.getMessage());
+            throw new PersistenciaException("Error al consultar el alumno por ID: " +ex.getMessage());
         }
     }
 
+    @Override
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
-        try (Connection conexion = this.conexion.crearConexion()) {
+        try(Connection conexion = this.conexion.crearConexion()){
             String comandoSQL = """
                                 
-                                SELECT COUNT(*) AS total
-                                    FROM bloqueo
-                                    WHERE idAlumno = ?;
                                 """;
-            PreparedStatement statment = conexion.prepareStatement(comandoSQL);
-            statment.setInt(1, idAlumno);
-            ResultSet resultado = statment.executeQuery();
-
-            if (resultado.next()) {
-                int total = resultado.getInt("total");
-                return total > 0;
-            }
-            return false;
-        } catch (SQLException ex) {
+        }catch(SQLException ex){
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: " + ex.getMessage());
+            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: "+ex.getMessage());
         }
+        
+    }
+
+    @Override
+    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -5,36 +5,36 @@
 package Persistencia;
 
 import Dtos.ComputadoraDTO;
-import Dtos.ObtenerCatalogoSoftwareDTO;
 import Entidades.Computadora;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
  * @author BALAMRUSH
  */
-public class ComputadoraDAO implements IComputadoraDAO {
+public class ComputadoraDAO implements IComputadoraDAO{
 
-    private static final Logger LOGGER = Logger.getLogger(UnidadAcademicaDAO.class.getName());
-
-    private IConexionBD conexion;
-
-    public ComputadoraDAO(IConexionBD conexion) {
-        this.conexion = conexion;
+    private IConexionBD conexion;    
+    public ComputadoraDAO(IConexionBD conexion){
+        this.conexion = conexion;    
     }
-
-    /*
+    
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException{
-        String sql = "SELECT c.*, cc.Nombre AS CentroNombre FROM COMPUTADORA c "
-                   + "JOIN CENTROCOMPUTO cc ON c.IDCentroComputo = cc.IDCentroComputo "
-                   + "WHERE c.DireccionIP = ?";
+        String sql = """
+                     SELECT
+                     idComputadora,
+                     numeroMaquina,
+                     direccionIP,
+                     estatus,
+                     tipo,
+                     idCentroComputo
+                     FROM Computadora
+                     WHERE direccionIp = ?
+                     """;
         
         try (Connection conn = this.conexion.crearConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -43,26 +43,26 @@ public class ComputadoraDAO implements IComputadoraDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Computadora pc = new Computadora();
-                    pc.setIdComputadora(rs.getInt("IDComputadora"));
-                    pc.setNumeroMaquina(rs.getInt("NumeroMaquina"));
-                    pc.setDireccionIP(rs.getString("DireccionIP"));
-                    pc.setEstatus(rs.getBoolean("Estatus")); 
-                    pc.setTipo(rs.getString("Tipo"));
-                    pc.setIdCentroComputo(rs.getInt("IDCentroComputo"));
+                    pc.setIdComputadora(rs.getInt("idComputadora"));
+                    pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
+                    pc.setIp(rs.getString("direccionIp"));
+                    pc.setEstatus(rs.getBoolean("estatus")); 
+                    pc.setTipo(rs.getString("tipo"));
+                    pc.setIdCentroComputo(rs.getInt("idCentroComputo"));
                     
                     return pc;
                 }
             }
         } catch (SQLException ex) {
-            System.getLogger(ComputadoraDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            throw new PersistenciaException("Error en ComputadoraDao al obtener pc por ip");
         }
         return null;
     }
-     */
 
-    @Override
-    public Computadora obtenerPCPorIP(String ip) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
+        @Override
+        public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
 }
+        
+

@@ -4,12 +4,21 @@
  */
 package Persistencia;
 
-import Dtos.ReservaDTO;
+import Entidades.Reserva;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
  * @author Andre
  */
 public interface IReservaDAO {
-    public ReservaDTO obtenerReservaActiva(int idComputadora);
+    Reserva registrarReserva(Reserva reserva) throws PersistenciaException;
+    Reserva consultarResrevaActivaPorAlumno(int idAlumno) throws PersistenciaException;
+    Reserva consultarReservaActivaPorComputadora(int idComputadora) throws PersistenciaException;
+    List<Reserva> consultar(String filtro) throws PersistenciaException;
+    List<Reserva> consultarReservasActivas() throws PersistenciaException;
+    void finalizarReserva(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException;
+    void cancelarReserva(int idReserva) throws PersistenciaException;
+    int consultarMinutosUsadosPorAlumno(int idAlumno); 
 }
