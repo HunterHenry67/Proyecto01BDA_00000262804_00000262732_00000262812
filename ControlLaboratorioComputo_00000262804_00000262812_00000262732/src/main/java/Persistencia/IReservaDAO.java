@@ -18,7 +18,7 @@ public interface IReservaDAO {
     Reserva consultarReservaActivaPorComputadora(int idComputadora) throws PersistenciaException;
     List<Reserva> consultar(String filtro) throws PersistenciaException;
     List<Reserva> consultarReservasActivas() throws PersistenciaException;
-    void finalizarBloqueo(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException;
-    void cancelarBloqueo(int idReserva) throws PersistenciaException;
+    void finalizarReserva(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException;
+    void cancelarReserva(int idReserva) throws PersistenciaException;
     int consultarMinutosUsadosPorAlumno(int idAlumno); 
 }

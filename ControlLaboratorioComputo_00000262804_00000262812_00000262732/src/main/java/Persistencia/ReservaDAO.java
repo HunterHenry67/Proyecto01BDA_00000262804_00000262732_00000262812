@@ -50,7 +50,40 @@ public class ReservaDAO implements IReservaDAO{
 
     @Override
     public Reserva consultarResrevaActivaPorAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Reserva> listaReservasActivas = new ArrayList<>();
+        try(Connection conexion = this.conexion.crearConexion()){
+            String comandoSQL = """
+                                SELECT 
+                                    idReserva,
+                                    fechaHoraApartado,
+                                    fechaHoraInicio,
+                                    fechaHoraFinal,
+                                    tiempoUso,
+                                    idAlumno,
+                                    idComputadora
+                                FROM reserva
+                                WHERE idAlumno = ?
+                                  AND fechaHoraFinal IS NULL;
+                                """;
+            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
+            statement.setInt(1, idAlumno);
+            ResultSet resultado = statement.executeQuery();
+            if(resultado.next()){
+                Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
+                Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinal");
+                return new Reserva(resultado.getInt("idReserva"), 
+                        resultado.getTimestamp("fechaHoraApartado").toLocalDateTime(), 
+                        fechaInicio != null ? fechaInicio.toLocalDateTime(): null,
+                        fechaFinal != null ? fechaFinal.toLocalDateTime(): null,
+                        resultado.getObject("tiempoUso") != null ? resultado.getInt("tiempoUso"): null,
+                        resultado.getInt("idAlumno"), 
+                        resultado.getInt("idComputadora"));
+            }
+            return null;
+        }catch(SQLException ex){
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar las reservas activas: "+ex.getMessage());
+        }
     }
 
     @Override
@@ -110,27 +143,7 @@ public class ReservaDAO implements IReservaDAO{
 
     @Override
     public List<Reserva> consultarReservasActivas() throws PersistenciaException {
-        List<Reserva> listaReservasActivas = new ArrayList<>();
-        try(Connection conexion = this.conexion.crearConexion()){
-            
-        }catch(SQLException ex){
-            LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar las reservas activas: "+ex.getMessage());
-        }
+        
     }
 
-    @Override
-    public void finalizarBloqueo(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void cancelarBloqueo(int idReserva) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public int consultarMinutosUsadosPorAlumno(int idAlumno) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
