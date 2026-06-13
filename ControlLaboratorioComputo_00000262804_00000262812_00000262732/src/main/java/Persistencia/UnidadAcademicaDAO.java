@@ -49,7 +49,7 @@ public class UnidadAcademicaDAO implements IUnidadAcademicaDAO{
             return null;         
         }catch(SQLException ex){
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al conusltar la Unidad Académica por ID" +ex.getMessage());
+            throw new PersistenciaException("Error al conusltar la Unidad Académica por ID: " +ex.getMessage());
         }
     }
 
