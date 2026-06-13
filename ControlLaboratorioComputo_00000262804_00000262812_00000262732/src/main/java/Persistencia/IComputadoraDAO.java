@@ -14,6 +14,5 @@ import java.util.List;
  */
 public interface IComputadoraDAO {
     Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
-    List<Computadora> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException;
     
 }

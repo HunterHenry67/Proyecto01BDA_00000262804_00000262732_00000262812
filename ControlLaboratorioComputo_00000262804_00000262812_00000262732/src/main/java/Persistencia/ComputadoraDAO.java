@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -18,15 +19,16 @@ import java.util.logging.Logger;
  *
  * @author BALAMRUSH
  */
-public class ComputadoraDAO implements IComputadoraDAO{
-    
+public class ComputadoraDAO implements IComputadoraDAO {
+
     private static final Logger LOGGER = Logger.getLogger(UnidadAcademicaDAO.class.getName());
 
     private IConexionBD conexion;
-    
-    public ComputadoraDAO(IConexionBD conexion){
+
+    public ComputadoraDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
+
     /*
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException{
@@ -56,56 +58,11 @@ public class ComputadoraDAO implements IComputadoraDAO{
         }
         return null;
     }
-    */
+     */
 
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
-    @Override
-    public List<Computadora> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException {
-
-        String comandoSQL = """
-        SELECT s.nombre
-        FROM software s
-        INNER JOIN computadora_software cs
-            ON s.idSoftware = cs.idSoftware
-        WHERE cs.idComputadora = ?;
-        """;
-
-        List<Computadora> catalogo = new ArrayList<>();
-
-        try (Connection conexion = conexionBD.crearConexion(); PreparedStatement ps = conexion.prepareStatement(comandoSQL)) {
-
-            ps.setInt(1, idComputadora);
-
-            try (ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    Computadora computadora = new Computadora();
-
-                    computadora.setNombreSoftware(
-                            rs.getString("nombre")
-                    );
-
-                    catalogo.add(computadora);
-                }
-            }
-
-            return catalogo;
-
-        } catch (SQLException e) {
-            throw new PersistenciaException(
-                    "Error al obtener el catálogo de software",
-                    e
-            );
-        }
-    }
-
-
-    
-    
-    
 
 }
