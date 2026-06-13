@@ -4,10 +4,14 @@
  */
 package Persistencia;
 
+import Dtos.ObtenerCatalogoSoftwareDTO;
+import Entidades.Software;
+import java.util.List;
+
 /**
  *
  * @author Andre
  */
 public interface ISoftwareDAO {
-    
+    List<Software> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException;
 }

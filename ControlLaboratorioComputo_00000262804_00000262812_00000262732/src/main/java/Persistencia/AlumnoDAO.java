@@ -129,6 +129,7 @@ public class AlumnoDAO implements IAlumnoDAO {
             LOGGER.severe(ex.getMessage());
             throw new PersistenciaException("Error al identificar si el alumno está bloqueado: "+ex.getMessage());
         }
+        
     }
 
     @Override

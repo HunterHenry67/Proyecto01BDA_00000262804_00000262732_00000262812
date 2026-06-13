@@ -19,9 +19,5 @@ public interface IAlumnoDAO {
 
     boolean estaBloqueado(int idAlumno) throws PersistenciaException;
 
-    void bloquearAlumno(int idAlumno) throws PersistenciaException;
-
-    void desbloquearAlumno(int idAlumno) throws PersistenciaException;
-
-    boolean validarCredenciales(int idAlumno, String contrasena) throws PersistenciaException;
+    Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException;
 }
