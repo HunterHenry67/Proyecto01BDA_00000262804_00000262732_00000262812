@@ -4,10 +4,21 @@
  */
 package Persistencia;
 
+import Entidades.Bloqueo;
+import java.util.List;
+
 /**
  *
  * @author Andre
  */
-public interface IBLoqueoDAO {
-    
+public interface IBloqueoDAO {
+
+    Bloqueo registrarBloqueo(Bloqueo bloqueo) throws PersistenciaException;
+
+    void desbloquearAlumno(int idAlumno) throws PersistenciaException;
+
+    List<Bloqueo> consultar(String filtro) throws PersistenciaException;
+
+    List<Bloqueo> consultarBloqueosActivos() throws PersistenciaException;
+
 }
