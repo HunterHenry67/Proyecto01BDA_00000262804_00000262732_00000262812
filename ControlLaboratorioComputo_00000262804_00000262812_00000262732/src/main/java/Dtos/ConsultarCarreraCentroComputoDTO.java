@@ -13,7 +13,7 @@ import java.time.LocalTime;
 public class ConsultarCarreraCentroComputoDTO {
     private String maquina;
     private String idAlumno;
-    private String nombre;
+    private String nombreAlumno;
     private String carrera;
     private String unidadAcademica;
     private String centroDeComputo;
@@ -39,12 +39,12 @@ public class ConsultarCarreraCentroComputoDTO {
         this.idAlumno = idAlumno;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreAlumno() {
+        return nombreAlumno;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombre(String nombreAlumno) {
+        this.nombreAlumno = nombreAlumno;
     }
 
     public String getCarrera() {

@@ -10,16 +10,16 @@ import java.time.LocalTime;
  *
  * @author Andre
  */
-public class ConsultarIDCentroComputoDTO {
+public class ConsultarIDAlumnoCentroComputoDTO {
     private String maquina;
     private String idAlumno;
-    private String nombre;
+    private String nombreAlumno;
     private String carrera;
     private String unidadAcademica;
     private String centroDeComputo;
     private LocalTime horaInicio;
 
-    public ConsultarIDCentroComputoDTO(String idAlumno) {
+    public ConsultarIDAlumnoCentroComputoDTO(String idAlumno) {
         this.idAlumno = idAlumno;
     }
 
@@ -40,12 +40,12 @@ public class ConsultarIDCentroComputoDTO {
         this.idAlumno = idAlumno;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreAlumno() {
+        return nombreAlumno;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombre(String nombreAlumno) {
+        this.nombreAlumno = nombreAlumno;
     }
 
     public String getCarrera() {
