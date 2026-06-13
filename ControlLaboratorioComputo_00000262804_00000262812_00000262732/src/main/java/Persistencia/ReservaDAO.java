@@ -5,6 +5,7 @@
 package Persistencia;
 
 import Dtos.ReservaDTO;
+import Entidades.Reserva;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,10 +17,14 @@ import java.sql.SQLException;
  */
 public class ReservaDAO implements IReservaDAO{
     
-    private final ConexionBD conexion = new ConexionBD();
+    private final IConexionBD conexion;
+    
+    public ReservaDAO (IConexion conexion){
+        this.conexion = conexion;
+    }
 
     @Override
-    public ReservaDTO obtenerReservaActiva(int idComputadora) {
+    public Reserva obtenerReservaActiva(int idComputadora) {
         String comandoSQL = """
             SELECT r.idReserva,
                    r.fechaHoraApartado,
@@ -41,12 +46,11 @@ public class ReservaDAO implements IReservaDAO{
             ps.setInt(1, idComputadora);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    ReservaDTO reserva = new ReservaDTO();
+                    Reserva reserva = new Reserva();
                     reserva.setIdReserva(rs.getInt("idReserva"));
-                    reserva.setFechaHoraApartado(rs.getTimestamp("fechaHoraApartado"));
+                    reserva.setFechaHoraApartado(rs.getTimestamp("fechaHoraApartado").toLocalDateTime());
                     reserva.setIdAlumno(rs.getInt("idAlumno")); 
                     reserva.setIdComputadora(rs.getInt("idComputadora"));
-                    reserva.setNombreAlumno(rs.getString("alumnoNombre")); // Atributo auxiliar
                     return reserva;
                 }
             }

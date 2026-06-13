@@ -133,12 +133,7 @@ public class AlumnoDAO implements IAlumnoDAO {
     }
 
     @Override
-    public void bloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
+    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
