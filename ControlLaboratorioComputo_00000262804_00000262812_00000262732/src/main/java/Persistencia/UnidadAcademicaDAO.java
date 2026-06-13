@@ -61,7 +61,7 @@ public class UnidadAcademicaDAO implements IUnidadAcademicaDAO{
             String comandoSQL = """
                                 SELECT idUnidadAcademica,
                                         nombre,
-                                FROM unidadAcedmica
+                                FROM unidadAcademica
                                 WHERE nombre = ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
