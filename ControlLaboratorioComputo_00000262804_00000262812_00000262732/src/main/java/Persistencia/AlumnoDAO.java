@@ -72,14 +72,16 @@ public class AlumnoDAO implements IAlumnoDAO {
             statement.setString(1, busquedaFiltro);
             statement.setString(2, busquedaFiltro);
             ResultSet resultado = statement.executeQuery();
-            if (resultado.next()) {
-                listaAlumnos.add(new Alumno(resultado.getInt("idAlumno"),
-                        resultado.getString("nombre"),
-                        resultado.getString("apellidoPaterno"),
-                        resultado.getString("apellidoPaterno"),
-                        resultado.getBoolean("estatus"),
-                        resultado.getString("contrasena"),
-                        resultado.getInt("idCarrera")));
+            while (resultado.next()) {
+                listaAlumnos.add(new Alumno(
+                    resultado.getInt("idAlumno"),
+                    resultado.getString("nombre"),
+                    resultado.getString("apellidoPaterno"),
+                    resultado.getString("apellidoMaterno"),  // ← también corregido
+                    resultado.getBoolean("estatus"),
+                    resultado.getString("contrasena"),
+                    resultado.getInt("idCarrera")
+                ));
             }
             return listaAlumnos;
         } catch (SQLException ex) {
@@ -101,7 +103,7 @@ public class AlumnoDAO implements IAlumnoDAO {
                                     contrasena,
                                     idCarrera
                                 FROM alumno
-                                WHERE idAlumno LIKE ?
+                                WHERE idAlumno = ?
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
@@ -129,8 +131,7 @@ public class AlumnoDAO implements IAlumnoDAO {
                                 
                                 SELECT COUNT(*) AS total
                                     FROM bloqueo
-                                    WHERE idAlumno = ?
-                                      AND estatus = TRUE;
+                                    WHERE idAlumno = ?;
                                 """;
             PreparedStatement statment = conexion.prepareStatement(comandoSQL);
             statment.setInt(1, idAlumno);

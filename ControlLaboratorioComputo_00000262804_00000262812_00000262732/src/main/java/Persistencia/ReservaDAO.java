@@ -46,7 +46,7 @@ public class ReservaDAO implements IReservaDAO{
                     reserva.setFechaHoraApartado(rs.getTimestamp("fechaHoraApartado"));
                     reserva.setIdAlumno(rs.getInt("idAlumno")); 
                     reserva.setIdComputadora(rs.getInt("idComputadora"));
-                    reserva.setNombreAlumno(rs.getString("AlumnoNombre")); // Atributo auxiliar
+                    reserva.setNombreAlumno(rs.getString("alumnoNombre")); // Atributo auxiliar
                     return reserva;
                 }
             }
