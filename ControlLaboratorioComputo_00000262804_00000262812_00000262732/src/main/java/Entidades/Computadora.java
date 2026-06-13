@@ -14,12 +14,12 @@ public class Computadora {
     private Integer numeroMaquina;
     private String ip;
     private boolean estatus;
-    private String idCentroComputo;
+    private int idCentroComputo;
 
     public Computadora() {
     }
 
-    public Computadora(Integer idComputadora, String tipo, Integer numeroMaquina, String ip, boolean estatus, String idCentroComputo) {
+    public Computadora(Integer idComputadora, String tipo, Integer numeroMaquina, String ip, boolean estatus, int idCentroComputo) {
         this.idComputadora = idComputadora;
         this.tipo = tipo;
         this.numeroMaquina = numeroMaquina;
@@ -68,11 +68,11 @@ public class Computadora {
         this.estatus = estatus;
     }
 
-    public String getIdCentroComputo() {
+    public int getIdCentroComputo() {
         return idCentroComputo;
     }
 
-    public void setIdCentroComputo(String idCentroComputo) {
+    public void setIdCentroComputo(int idCentroComputo) {
         this.idCentroComputo = idCentroComputo;
     }
       

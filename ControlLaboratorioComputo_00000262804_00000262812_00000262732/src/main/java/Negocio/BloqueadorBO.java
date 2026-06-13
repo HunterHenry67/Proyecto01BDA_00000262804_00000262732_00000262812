@@ -6,11 +6,13 @@ package Negocio;
 
 import Dtos.ComputadoraDTO;
 import Dtos.ReservaDTO;
+import Entidades.Computadora;
 import Persistencia.AlumnoDAO;
 import Persistencia.ComputadoraDAO;
 import Persistencia.IAlumnoDAO;
 import Persistencia.IComputadoraDAO;
 import Persistencia.IReservaDAO;
+import Persistencia.PersistenciaException;
 import Persistencia.ReservaDAO;
 
 /**
@@ -28,7 +30,7 @@ public class BloqueadorBO {
         this.alumnoDAO = new AlumnoDAO();
     }
 
-    public ComputadoraDTO buscarPCPorIP(String ip) {
+    public Computadora buscarPCPorIP(String ip) throws PersistenciaException {
         return computadoraDAO.obtenerPCPorIP(ip);
     }
 

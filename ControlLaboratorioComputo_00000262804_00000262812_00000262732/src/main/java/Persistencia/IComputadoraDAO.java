@@ -13,8 +13,8 @@ import Entidades.Computadora;
  */
 public interface IComputadoraDAO {
     
-    public Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
+    Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
     
-    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
+    Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
     
 }

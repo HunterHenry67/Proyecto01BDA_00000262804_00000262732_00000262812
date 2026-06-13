@@ -6,7 +6,9 @@ package PresentacionProgramaBloqueo;
 
 import Dtos.ComputadoraDTO;
 import Dtos.ReservaDTO;
+import Entidades.Computadora;
 import Negocio.BloqueadorBO;
+import Persistencia.PersistenciaException;
 
 /**
  *
@@ -20,7 +22,7 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
     /**
      * Creates new form PresentaciónProgramaBloqueadorPC
      */
-    public PresentaciónProgramaBloqueadorPC() {
+    public PresentaciónProgramaBloqueadorPC() throws PersistenciaException {
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         this.setAlwaysOnTop(true);
@@ -29,7 +31,7 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         inicializarBloqueador();
     }
     
-    private void inicializarBloqueador() {
+    private void inicializarBloqueador() throws PersistenciaException {
         String ipLocal = "127.0.0.1"; 
         try {
             ipLocal = java.net.InetAddress.getLocalHost().getHostAddress();
@@ -38,7 +40,7 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         }
 
         BloqueadorBO negocio = new BloqueadorBO();
-        ComputadoraDTO pc = negocio.buscarPCPorIP(ipLocal);
+        Computadora pc = negocio.buscarPCPorIP(ipLocal);
 
         if (pc != null) {
             lblNumeroPC.setText(String.format("%02d", pc.getNumeroMaquina()));
