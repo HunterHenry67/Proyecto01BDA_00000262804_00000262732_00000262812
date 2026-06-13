@@ -32,9 +32,9 @@ public class frmMenuGestion extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         txtTitulo = new javax.swing.JLabel();
         txtSubtitulo = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnMonitoreoEquipo = new javax.swing.JButton();
+        btnAlumnosBloqueados = new javax.swing.JButton();
+        btnGestionEquipo = new javax.swing.JButton();
 
         jButton2.setBackground(new java.awt.Color(45, 45, 45));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -53,30 +53,30 @@ public class frmMenuGestion extends javax.swing.JFrame {
         txtSubtitulo.setForeground(new java.awt.Color(153, 153, 153));
         txtSubtitulo.setText("Menú Gestión");
 
-        jButton1.setBackground(new java.awt.Color(45, 45, 45));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Gestión de Monitoreo de Equipo");
-        jButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
-        jButton1.setBorderPainted(false);
-        jButton1.setFocusPainted(false);
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        btnMonitoreoEquipo.setBackground(new java.awt.Color(45, 45, 45));
+        btnMonitoreoEquipo.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        btnMonitoreoEquipo.setForeground(new java.awt.Color(255, 255, 255));
+        btnMonitoreoEquipo.setText("Gestión de Monitoreo de Equipo");
+        btnMonitoreoEquipo.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+        btnMonitoreoEquipo.setBorderPainted(false);
+        btnMonitoreoEquipo.setFocusPainted(false);
+        btnMonitoreoEquipo.addActionListener(this::btnMonitoreoEquipoActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(45, 45, 45));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Gestión de Alumnos Bloqueados");
-        jButton3.setBorderPainted(false);
-        jButton3.setFocusPainted(false);
-        jButton3.addActionListener(this::jButton3ActionPerformed);
+        btnAlumnosBloqueados.setBackground(new java.awt.Color(45, 45, 45));
+        btnAlumnosBloqueados.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        btnAlumnosBloqueados.setForeground(new java.awt.Color(255, 255, 255));
+        btnAlumnosBloqueados.setText("Gestión de Alumnos Bloqueados");
+        btnAlumnosBloqueados.setBorderPainted(false);
+        btnAlumnosBloqueados.setFocusPainted(false);
+        btnAlumnosBloqueados.addActionListener(this::btnAlumnosBloqueadosActionPerformed);
 
-        jButton4.setBackground(new java.awt.Color(45, 45, 45));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Gestión de Equipo");
-        jButton4.setBorderPainted(false);
-        jButton4.setFocusPainted(false);
-        jButton4.addActionListener(this::jButton4ActionPerformed);
+        btnGestionEquipo.setBackground(new java.awt.Color(45, 45, 45));
+        btnGestionEquipo.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        btnGestionEquipo.setForeground(new java.awt.Color(255, 255, 255));
+        btnGestionEquipo.setText("Gestión de Equipo");
+        btnGestionEquipo.setBorderPainted(false);
+        btnGestionEquipo.setFocusPainted(false);
+        btnGestionEquipo.addActionListener(this::btnGestionEquipoActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -84,7 +84,7 @@ public class frmMenuGestion extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(220, 220, 220)
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnMonitoreoEquipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(220, 220, 220))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(253, Short.MAX_VALUE)
@@ -92,11 +92,11 @@ public class frmMenuGestion extends javax.swing.JFrame {
                 .addGap(248, 248, 248))
             .addGroup(layout.createSequentialGroup()
                 .addGap(220, 220, 220)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(btnAlumnosBloqueados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(220, 220, 220))
             .addGroup(layout.createSequentialGroup()
                 .addGap(220, 220, 220)
-                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGestionEquipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(220, 220, 220))
             .addGroup(layout.createSequentialGroup()
                 .addGap(248, 248, 248)
@@ -111,32 +111,32 @@ public class frmMenuGestion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtSubtitulo)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnMonitoreoEquipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAlumnosBloqueados, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGestionEquipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(74, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnMonitoreoEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitoreoEquipoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnMonitoreoEquipoActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnAlumnosBloqueadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlumnosBloqueadosActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnAlumnosBloqueadosActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnGestionEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionEquipoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnGestionEquipoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -164,10 +164,10 @@ public class frmMenuGestion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnAlumnosBloqueados;
+    private javax.swing.JButton btnGestionEquipo;
+    private javax.swing.JButton btnMonitoreoEquipo;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel txtSubtitulo;
     private javax.swing.JLabel txtTitulo;
     // End of variables declaration//GEN-END:variables
