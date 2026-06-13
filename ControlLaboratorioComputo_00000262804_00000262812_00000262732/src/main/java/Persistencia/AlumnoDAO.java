@@ -44,8 +44,8 @@ public class AlumnoDAO implements IAlumnoDAO {
                                        contrasena,
                                        idCarrera
                                 FROM alumno
-                                WHERE idAlumno LIKE ?
-                                    OR contrasena LIKE ?;
+                                WHERE idAlumno = ?
+                                    OR contrasena = ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
@@ -95,7 +95,7 @@ public class AlumnoDAO implements IAlumnoDAO {
                     resultado.getInt("idAlumno"),
                     resultado.getString("nombre"),
                     resultado.getString("apellidoPaterno"),
-                    resultado.getString("apellidoMaterno"),  // ← también corregido
+                    resultado.getString("apellidoMaterno"),  
                     resultado.getBoolean("estatus"),
                     resultado.getString("contrasena"),
                     resultado.getInt("idCarrera")
@@ -164,15 +164,5 @@ public class AlumnoDAO implements IAlumnoDAO {
             LOGGER.severe(ex.getMessage());
             throw new PersistenciaException("Error al identificar si el alumno está bloqueado: " + ex.getMessage());
         }
-    }
-
-    @Override
-    public void bloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
