@@ -4,10 +4,12 @@
  */
 package Persistencia;
 
+import Dtos.ReservaDTO;
+
 /**
  *
  * @author Andre
  */
 public interface IReservaDAO {
-    
+    public ReservaDTO obtenerReservaActiva(int idComputadora);
 }

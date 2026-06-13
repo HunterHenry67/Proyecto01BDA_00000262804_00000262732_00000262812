@@ -9,5 +9,5 @@ package Persistencia;
  * @author BALAMRUSH
  */
 public interface IAlumnoDAO {
-    
+    public boolean validarCredenciales(int idAlumno, String contrasena);
 }

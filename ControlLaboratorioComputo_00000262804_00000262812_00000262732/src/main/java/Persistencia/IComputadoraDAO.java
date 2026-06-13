@@ -4,10 +4,12 @@
  */
 package Persistencia;
 
+import Dtos.ComputadoraDTO;
+
 /**
  *
  * @author BALAMRUSH
  */
 public interface IComputadoraDAO {
-    
+    public ComputadoraDTO obtenerPCPorIP(String ip);
 }
