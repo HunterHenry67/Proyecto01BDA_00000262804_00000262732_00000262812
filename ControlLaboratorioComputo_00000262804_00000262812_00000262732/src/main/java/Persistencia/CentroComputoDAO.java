@@ -15,7 +15,9 @@ import Entidades.CentroComputo;
 import com.sun.jdi.IntegerValue;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.logging.Logger;
 
 /**
@@ -47,7 +49,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                       AND r.fechaHoraFinal IS NULL
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setInt(1, IntegerValue(dto.getIdAlumno()));
+            ps.setInt(1, dto.getIdAlumno());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -83,7 +85,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                       AND r.fechaHoraFinal IS NULL
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setString(1, "%" + dto.getNombre() + "%");
+            ps.setString(1, "%" + dto.getNombreAlumno() + "%");
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -116,7 +118,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                     WHERE c.numeroMaquina = ?
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setInt(1, dto.getNumeroMaquina());
+            ps.setInt(1, dto.getMaquina());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -152,7 +154,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                       AND r.fechaHoraFinal IS NULL
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setInt(1, dto.getIdCarrera());
+            ps.setString(1, dto.getCarrera());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -184,7 +186,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                     WHERE cc.idUnidadAcademica = ?
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setInt(1, dto.getIdUnidadAcademica());
+            ps.setString(1, dto.getUnidadAcademica());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -216,7 +218,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                     WHERE cc.idCentroComputo = ?
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setInt(1, dto.getIdCentroComputo());
+            ps.setString(1, dto.getCentroDeComputo());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -248,7 +250,7 @@ public class CentroComputoDAO implements ICentroComputoDAO {
                     WHERE cc.horaInicio = ?
                     """;
             PreparedStatement ps = conexion.prepareStatement(comandoSQL);
-            ps.setTime(1, dto.getHoraInicio());
+            ps.setTime(1, Time.valueOf(dto.getHoraInicio()));
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -266,5 +268,15 @@ public class CentroComputoDAO implements ICentroComputoDAO {
             throw new PersistenciaException("Error al consultar centro de cómputo por hora inicio: " + ex.getMessage());
         }
     }
+
+    @Override
+    public CentroComputo consultarPorIDAlumno(ConsultarIDAlumnoCentroComputoDTO id) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public CentroComputo consultarPorNombreAlumno(ConsultarNombreAlumnoCentroComputoDTO nombre) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
-}
+

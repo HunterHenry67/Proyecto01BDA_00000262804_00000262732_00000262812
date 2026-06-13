@@ -11,8 +11,8 @@ import java.time.LocalTime;
  * @author Andre
  */
 public class ConsultarCarreraCentroComputoDTO {
-    private String maquina;
-    private String idAlumno;
+    private Integer maquina;
+    private Integer idAlumno;
     private String nombreAlumno;
     private String carrera;
     private String unidadAcademica;
@@ -20,22 +20,22 @@ public class ConsultarCarreraCentroComputoDTO {
     private LocalTime horaInicio;
 
     public ConsultarCarreraCentroComputoDTO(String carrera) {
-        this.idAlumno = carrera;
+        this.carrera = carrera;
     }
 
-    public String getMaquina() {
+    public Integer getMaquina() {
         return maquina;
     }
 
-    public void setMaquina(String maquina) {
+    public void setMaquina(Integer maquina) {
         this.maquina = maquina;
     }
 
-    public String getIdAlumno() {
+    public Integer getIdAlumno() {
         return idAlumno;
     }
 
-    public void setIdAlumno(String idAlumno) {
+    public void setIdAlumno(Integer idAlumno) {
         this.idAlumno = idAlumno;
     }
 
@@ -78,4 +78,6 @@ public class ConsultarCarreraCentroComputoDTO {
     public void setHoraInicio(LocalTime horaInicio) {
         this.horaInicio = horaInicio;
     }
+
+    
 }
