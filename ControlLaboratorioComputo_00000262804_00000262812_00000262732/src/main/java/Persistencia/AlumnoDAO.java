@@ -33,21 +33,39 @@ public class AlumnoDAO implements IAlumnoDAO {
     }
 
     @Override
-    public boolean validarCredenciales(int idAlumno, String contrasena) {
-        String sql = "SELECT idAlumno FROM ALUMNO WHERE idAlumno = ? AND contrasena = ?";
-
-        try (Connection conn = conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, idAlumno);
-            ps.setString(2, contrasena);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException{
+        try(Connection conexion = this.conexion.crearConexion()){
+            String comandoSQL = """
+                                SELECT idAlumno,
+                                       nombre,
+                                       apellidoPaterno,
+                                       apellidoMaterno,
+                                       estatus,
+                                       contrasena,
+                                       idCarrera
+                                FROM alumno
+                                WHERE idAlumno LIKE ?
+                                    OR contrasena LIKE ?;
+                                """;
+            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
+            statement.setInt(1, idAlumno);
+            statement.setString(2, contrasena);
+            ResultSet resultado = statement.executeQuery();
+            
+            if(resultado.next()){
+                return new Alumno(resultado.getInt("idAlumno"),
+                                  resultado.getString("nombre"),
+                                  resultado.getString("apellidoMaterno"),
+                                  resultado.getString("apellidoPaterno"),
+                                  resultado.getBoolean("estatus"),
+                                  resultado.getString("constrasena"),
+                                  resultado.getInt("idCarrera"));
             }
-        } catch (SQLException e) {
-            System.err.println("Error en AlumnoDAO.validarCredenciales: " + e.getMessage());
+            return null;
+        }catch(SQLException ex){
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar las credenciales del alumno: " +ex.getMessage());
         }
-        return false;
     }
 
     @Override
