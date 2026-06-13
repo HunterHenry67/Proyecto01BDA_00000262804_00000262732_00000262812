@@ -12,5 +12,31 @@ public class UnidadAcademica {
     private Integer idUnidadAcademica;
     private String nombre;
     
+    public UnidadAcademica(){
+        
+    }
+
+    public UnidadAcademica(Integer idUnidadAcademica, String nombre) {
+        this.idUnidadAcademica = idUnidadAcademica;
+        this.nombre = nombre;
+    }
+
+    public Integer getIdUnidadAcademica() {
+        return idUnidadAcademica;
+    }
+
+    public void setIdUnidadAcademica(Integer idUnidadAcademica) {
+        this.idUnidadAcademica = idUnidadAcademica;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    
     
 }
