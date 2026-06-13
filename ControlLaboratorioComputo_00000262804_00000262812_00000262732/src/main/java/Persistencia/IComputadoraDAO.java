@@ -5,11 +5,16 @@
 package Persistencia;
 
 import Dtos.ComputadoraDTO;
+import Entidades.Computadora;
 
 /**
  *
  * @author BALAMRUSH
  */
 public interface IComputadoraDAO {
-    public ComputadoraDTO obtenerPCPorIP(String ip);
+    
+    public Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
+    
+    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
+    
 }
