@@ -4,7 +4,8 @@
  */
 package Entidades;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 /**
  *
@@ -12,18 +13,20 @@ import java.util.Date;
  */
 public class Bloqueo {
     private Integer idBloqueo;
-    private Date fechaHoraIncioBloqueo;
-    private Date fechaHoraFinalBloqueo;
+    private LocalDateTime fechaHoraIncioBloqueo;
+    private LocalDateTime fechaHoraFinalBloqueo;
     private String motivo;
+    private int idAlumno;
 
     public Bloqueo() {
     }
 
-    public Bloqueo(Integer idBloqueo, Date fechaHoraIncioBloqueo, Date fechaHoraFinalBloqueo, String motivo) {
+    public Bloqueo(Integer idBloqueo, LocalDateTime fechaHoraIncioBloqueo, LocalDateTime fechaHoraFinalBloqueo, String motivo, int idAlumno) {
         this.idBloqueo = idBloqueo;
         this.fechaHoraIncioBloqueo = fechaHoraIncioBloqueo;
         this.fechaHoraFinalBloqueo = fechaHoraFinalBloqueo;
         this.motivo = motivo;
+        this.idAlumno = idAlumno;
     }
 
     public Integer getIdBloqueo() {
@@ -34,19 +37,19 @@ public class Bloqueo {
         this.idBloqueo = idBloqueo;
     }
 
-    public Date getFechaHoraIncioBloqueo() {
+    public LocalDateTime getFechaHoraIncioBloqueo() {
         return fechaHoraIncioBloqueo;
     }
 
-    public void setFechaHoraIncioBloqueo(Date fechaHoraIncioBloqueo) {
+    public void setFechaHoraIncioBloqueo(LocalDateTime fechaHoraIncioBloqueo) {
         this.fechaHoraIncioBloqueo = fechaHoraIncioBloqueo;
     }
 
-    public Date getFechaHoraFinalBloqueo() {
+    public LocalDateTime getFechaHoraFinalBloqueo() {
         return fechaHoraFinalBloqueo;
     }
 
-    public void setFechaHoraFinalBloqueo(Date fechaHoraFinalBloqueo) {
+    public void setFechaHoraFinalBloqueo(LocalDateTime fechaHoraFinalBloqueo) {
         this.fechaHoraFinalBloqueo = fechaHoraFinalBloqueo;
     }
 
@@ -57,7 +60,12 @@ public class Bloqueo {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
-    
-    
-    
+
+    public int getIdAlumno() {
+        return idAlumno;
+    }
+
+    public void setIdAlumno(int idAlumno) {
+        this.idAlumno = idAlumno;
+    }  
 }
