@@ -15,19 +15,19 @@ public class Reserva {
     private LocalDateTime fechaHoraApartado;
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraFinal;
-    private Integer tiempoRestante;
+    private Integer tiempoUso;
     private Integer idAlumno;
     private Integer idComputadora;
 
     public Reserva() {
     }
 
-    public Reserva(Integer idReserva, LocalDateTime fechaHoraApartado, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFinal, Integer tiempoRestante, Integer idAlumno, Integer idComputadora) {
+    public Reserva(Integer idReserva, LocalDateTime fechaHoraApartado, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFinal, Integer tiempoUso, Integer idAlumno, Integer idComputadora) {
         this.idReserva = idReserva;
         this.fechaHoraApartado = fechaHoraApartado;
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraFinal = fechaHoraFinal;
-        this.tiempoRestante = tiempoRestante;
+        this.tiempoUso = tiempoUso;
         this.idAlumno = idAlumno;
         this.idComputadora = idComputadora;
     }
@@ -64,12 +64,12 @@ public class Reserva {
         this.fechaHoraFinal = fechaHoraFinal;
     }
 
-    public Integer getTiempoRestante() {
-        return tiempoRestante;
+    public Integer getTiempoUso() {
+        return tiempoUso;
     }
 
-    public void setTiempoRestante(Integer tiempoRestante) {
-        this.tiempoRestante = tiempoRestante;
+    public void setTiempoUso(Integer tiempoRestante) {
+        this.tiempoUso = tiempoRestante;
     }
 
     public Integer getIdAlumno() {
