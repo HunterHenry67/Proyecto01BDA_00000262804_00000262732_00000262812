@@ -55,7 +55,7 @@ public class frmGestionEquipos extends javax.swing.JFrame {
 
         txtSubtitulo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         txtSubtitulo.setForeground(new java.awt.Color(153, 153, 153));
-        txtSubtitulo.setText("Monitoreo Equipo");
+        txtSubtitulo.setText("Gestión Equipo");
 
         txtBusqueda.addActionListener(this::txtBusquedaActionPerformed);
 
@@ -98,16 +98,19 @@ public class frmGestionEquipos extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(248, 248, 248)
+                                .addComponent(txtTitulo)
+                                .addGap(32, 32, 32))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtSubtitulo)
-                                    .addComponent(txtTitulo))
-                                .addGap(32, 32, 32)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(30, 30, 30))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(txtSubtitulo)
+                                        .addGap(48, 48, 48)))))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cboFiltro, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
