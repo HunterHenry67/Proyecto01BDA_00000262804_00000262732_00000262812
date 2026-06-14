@@ -6,6 +6,7 @@ package Persistencia;
 
 import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
+import java.sql.Connection;
 
 /**
  *
@@ -17,7 +18,7 @@ public interface IComputadoraDAO {
 
     ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
 
-    void mostrarComputadoraComoDisponible(int idComputadora) throws PersistenciaException;
+    void mostrarComputadoraComoDisponible(int idComputadora, Connection transaccion) throws PersistenciaException;
 
     Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException;
 

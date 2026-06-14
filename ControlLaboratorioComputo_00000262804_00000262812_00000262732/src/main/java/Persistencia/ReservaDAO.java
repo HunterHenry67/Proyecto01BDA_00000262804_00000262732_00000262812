@@ -51,10 +51,11 @@ public class ReservaDAO implements IReservaDAO {
             PreparedStatement statement = this.transaccion.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setTimestamp(1, Timestamp.valueOf(reserva.getFechaHoraApartado()));
             if (reserva.getFechaHoraInicio() != null) {
-                statement.setTimestamp(2, Timestamp.valueOf(reserva.getFechaHoraApartado()));
+                statement.setTimestamp(2, Timestamp.valueOf(reserva.getFechaHoraInicio()));
             } else {
-                statement.setNull(3, Types.TIMESTAMP);
+                statement.setNull(2, Types.TIMESTAMP);
             }
+            statement.setNull(3, Types.TIMESTAMP);
             if (reserva.getTiempoUso() != null) {
                 statement.setInt(4, reserva.getTiempoUso());
             } else {
@@ -182,6 +183,9 @@ public class ReservaDAO implements IReservaDAO {
             statement.setString(3, busquedaFiltro);
             statement.setString(4, busquedaFiltro);
             statement.setString(5, busquedaFiltro);
+            statement.setString(6, busquedaFiltro);
+            statement.setString(7, busquedaFiltro);
+            statement.setString(8, busquedaFiltro);
             ResultSet resultado = statement.executeQuery();
             while (resultado.next()) {
                 Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
@@ -374,7 +378,7 @@ public class ReservaDAO implements IReservaDAO {
                     this.transaccion.rollback();
                     System.out.println("Rollback realizado");
                 } catch (SQLException x) {
-                    System.out.println("No se pudo hacer un rollback");
+                    throw new PersistenciaException("No se pudo hacer un rollback :" + ex.getMessage());
                 }
             }
             throw new PersistenciaException("La transacción fue abortada: " + ex.getMessage());
@@ -383,7 +387,7 @@ public class ReservaDAO implements IReservaDAO {
                 try {
                     this.transaccion.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error al crear la conexión.");
+                    throw new PersistenciaException("Error al crear la conexión:" + ex.getMessage());
                 }
             }
             this.transaccion = null;
@@ -396,14 +400,15 @@ public class ReservaDAO implements IReservaDAO {
             this.transaccion = this.conexion.crearConexion();
             this.transaccion.setAutoCommit(false);
             Reserva reservaD = this.consultarReservaPorID(reserva.getIdReserva());
-            if (reserva == null) {
+            if (reservaD == null) {
                 throw new PersistenciaException("No existe la reserva.");
             }
             this.cancelarReserva(reserva.getIdReserva());
+
             ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
-            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora());
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(),this.transaccion);
             this.transaccion.commit();
-            reservaD.setFechaHoraFinal(LocalDateTime.MIN);
+            reservaD.setFechaHoraFinal(LocalDateTime.now());
             reservaD.setTiempoUso(0);
             return reservaD;
 
@@ -422,7 +427,7 @@ public class ReservaDAO implements IReservaDAO {
                 try {
                     this.transaccion.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error al crear la conexión.");
+                    throw new PersistenciaException("Error al crear la conexión:" + ex.getMessage());
                 }
             }
             this.transaccion = null;
@@ -440,7 +445,7 @@ public class ReservaDAO implements IReservaDAO {
             }
             this.finalizarReserva(reserva);
             ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
-            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora());
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(),this.transaccion);
             this.transaccion.commit();
             reservaD.setFechaHoraFinal(reserva.getFechaHoraFinal());
             reservaD.setTiempoUso(calcularTiempoUso(reservaD.getFechaHoraInicio(), reservaD.getFechaHoraApartado(), reserva.getFechaHoraFinal()));
@@ -451,7 +456,7 @@ public class ReservaDAO implements IReservaDAO {
                     this.transaccion.rollback();
                     System.out.println("Rollback realizado");
                 } catch (SQLException x) {
-                    System.out.println("No se pudo hacer un rollback");
+                    throw new PersistenciaException("No se pudo hacer el rollback" + x.getMessage());
                 }
             }
             throw new PersistenciaException("La transacción fue abortado: " + e.getMessage());
@@ -460,7 +465,7 @@ public class ReservaDAO implements IReservaDAO {
                 try {
                     this.transaccion.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error al crear la conexión.");
+                    throw new PersistenciaException("Error al crear la conexión:" + ex.getMessage());
                 }
             }
             this.transaccion = null;
