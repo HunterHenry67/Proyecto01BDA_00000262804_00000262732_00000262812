@@ -79,7 +79,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
                      tipo,
                      idCentroComputo
                      FROM Computadora
-                     WHERE idComputadora = ? AND status = true
+                     WHERE idComputadora = ? AND estatus = true
                      """;
         try (Connection conn = this.conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
