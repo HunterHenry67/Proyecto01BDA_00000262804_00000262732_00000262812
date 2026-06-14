@@ -4,6 +4,9 @@
  */
 package Dtos;
 
+import Entidades.Software;
+import java.util.List;
+
 /**
  *
  * @author user
@@ -16,6 +19,7 @@ public class ComputadoraDTO {
     private String tipo;
     private int idCentroComputo;
     private String nombreCentro;
+    private List<Software> catalogoSoftware;
 
     public ComputadoraDTO() {
     }
@@ -86,7 +90,13 @@ public class ComputadoraDTO {
         this.nombreCentro = nombreCentro;
     }
     
-    
+    public List<Software> getCatalogoSoftware() {
+        return catalogoSoftware;
+    }
+
+    public void setCatalogoSoftware(List<Software> catalogoSoftware) {
+        this.catalogoSoftware = catalogoSoftware;
+    }
     
     
 }

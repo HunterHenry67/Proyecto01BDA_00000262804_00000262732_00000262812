@@ -6,11 +6,14 @@ package Persistencia;
 
 import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
+import Entidades.Software;
 import Persistencia.PersistenciaException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -127,7 +130,49 @@ public class ComputadoraDAO implements IComputadoraDAO {
     }
 
     @Override
-    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String comandoSQL = """
+                            SELECT c.idComputadora, c.numeroMaquina, c.direccionIP, c.estatus, c.tipo, c.idCentroComputo,
+                                   s.idSoftware, s.nombre
+                            FROM computadora c
+                            INNER JOIN computadora_software cs ON cs.idComputadora = c.idComputadora
+                            INNER JOIN software s ON s.idSoftware = cs.idSoftware
+                            WHERE c.idComputadora = ?
+                            """;
+            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
+            statement.setInt(1, idComputadora);
+            ResultSet resultado = statement.executeQuery();
+
+            ComputadoraDTO computadora = null;
+            List<Software> catalogo = new ArrayList<>();
+
+            while (resultado.next()) {
+                if (computadora == null) {
+                    computadora = new ComputadoraDTO();
+                    computadora.setIdComputadora(resultado.getInt("idComputadora"));
+                    computadora.setNumeroMaquina(resultado.getInt("numeroMaquina"));
+                    computadora.setDireccionIP(resultado.getString("direccionIP"));
+                    computadora.setEstatus(resultado.getBoolean("estatus"));
+                    computadora.setTipo(resultado.getString("tipo"));
+                    computadora.setIdCentroComputo(resultado.getInt("idCentroComputo"));
+                }
+                Software software = new Software();
+                software.setIdSoftware(resultado.getInt("idSoftware"));
+                software.setNombre(resultado.getString("nombre"));
+                catalogo.add(software);
+            }
+
+            if (computadora != null) {
+                computadora.setCatalogoSoftware(catalogo);
+            }
+            return computadora;
+
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al obtener el catálogo de software: " + ex.getMessage());
+        }
     }
+
 }
+
