@@ -17,4 +17,6 @@ public interface IComputadoraDAO {
     
     Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
     
+    Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException;
+    
 }

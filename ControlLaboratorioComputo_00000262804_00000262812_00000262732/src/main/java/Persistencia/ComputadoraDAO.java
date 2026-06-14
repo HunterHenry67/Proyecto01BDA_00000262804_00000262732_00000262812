@@ -63,6 +63,43 @@ public class ComputadoraDAO implements IComputadoraDAO{
         public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
             throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
+
+    @Override
+    public Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException {
+        String sql = """
+                     SELECT
+                     idComputadora,
+                     numeroMaquina,
+                     direccionIP,
+                     estatus,
+                     tipo,
+                     idCentroComputo
+                     FROM Computadora
+                     WHERE idComputadora = ? AND status = true
+                     """;
+        try (Connection conn = this.conexion.crearConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, idComputadora);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Computadora pc = new Computadora();
+                    pc.setIdComputadora(rs.getInt("idComputadora"));
+                    pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
+                    pc.setIp(rs.getString("direccionIP"));
+                    pc.setEstatus(rs.getBoolean("estatus")); 
+                    pc.setTipo(rs.getString("tipo"));
+                    pc.setIdCentroComputo(rs.getInt("idCentroComputo"));
+                    
+                    return pc;
+                }
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error en ComputadoraDao al obtener status de pc por id");
+        }
+        return null;
+        
+    }
 }
         
 
