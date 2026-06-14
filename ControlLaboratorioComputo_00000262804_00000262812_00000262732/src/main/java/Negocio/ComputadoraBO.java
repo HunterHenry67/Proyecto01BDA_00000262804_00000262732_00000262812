@@ -28,7 +28,6 @@ public class ComputadoraBO {
         if(compu.isEstatus() == false){
             throw new NegocioException("Computadora con el ip: " + ip + " no esta habilitada");
         }
-        
         return compu;
     }
 }
