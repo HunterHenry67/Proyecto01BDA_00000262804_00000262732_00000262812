@@ -8,6 +8,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
-        <exec.mainClass>enriquemadridalvarez.controllaboratoriocomputo_00000262804_00000262812_00000262732.ControlLaboratorioComputo_00000262804_00000262812_00000262732</exec.mainClass>
+        <exec.mainClass>enriquemadridalvarez.NewMain</exec.mainClass>
     </properties>
 </project>
