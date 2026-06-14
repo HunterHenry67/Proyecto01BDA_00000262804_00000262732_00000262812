@@ -19,7 +19,7 @@ public interface IAlumnoBO {
 
     boolean estaBloqueado(Integer idAlumno) throws NegocioException;
 
-    Alumno iniciarSesion(Integer idAlumno, String contrasena) throws NegocioException;
+    Alumno validarCredenciales(Integer idAlumno, String contrasena) throws NegocioException;
 
     Alumno validarAlumnoDisponible(Integer idAlumno) throws NegocioException;
 }
