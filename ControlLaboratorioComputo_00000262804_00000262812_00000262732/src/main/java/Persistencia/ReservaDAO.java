@@ -234,6 +234,7 @@ public class ReservaDAO implements IReservaDAO {
             }
             return listaReservas;
         } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new PersistenciaException("Error al consultar la lista de reservas activas: " + ex.getMessage());
         }
 
@@ -241,17 +242,115 @@ public class ReservaDAO implements IReservaDAO {
 
     @Override
     public void finalizarReserva(FinalizarReservaDTO reserva) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            String comandoSQL = """
+                                UPDATE reserva
+                                    SET fechaHoraFinal = ?,
+                                        tiempoUso = TIMESTAMPDIFF(
+                                            MINUTE,
+                                            COALESCE(fechaHoraInicio, fechaHoraApartado),
+                                            ?
+                                        )
+                                    WHERE idReserva = ?
+                                      AND fechaHoraFinal IS NULL;
+                                """;
+            PreparedStatement statement = this.transaccion.prepareStatement(comandoSQL);
+            Timestamp fechaFinal = Timestamp.valueOf(reserva.getFechaHoraFinal());
+
+            statement.setTimestamp(1, fechaFinal);
+            statement.setTimestamp(2, fechaFinal);
+            statement.setInt(3, reserva.getIdReserva());
+
+            int filasAfectadas = statement.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new PersistenciaException("Reserva ya finalizada.");
+            }
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al finalizar reserva: " + ex.getMessage());
+        }
     }
 
     @Override
-    public void cancelarReserva(CancelarReservaDTO reserva) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void cancelarReserva(int idReserva) throws PersistenciaException {
+        try {
+            String comandoSQL = """
+                                UPDATE reserva
+                                    SET fechaHoraFinal = NOW(),
+                                        tiempoUso = 0
+                                    WHERE idReserva = ?
+                                      AND fechaHoraFinal IS NULL;
+                                """;
+            PreparedStatement statement = this.transaccion.prepareStatement(comandoSQL);
+            statement.setInt(1, idReserva);
+            int filasAfectadas = statement.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new PersistenciaException("No se pudo cancelar la reserva. Puede que ya esté finalizada.");
+            }
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al cancelar la reserva: " + ex.getMessage());
+        }
     }
 
     @Override
-    public int consultarMinutosUsadosPorAlumno(int idAlumno) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Reserva consultarReservaPorID(int idReserva) throws PersistenciaException {
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String comandoSQL = """
+                                SELECT
+                                    idReserva,
+                                    fechaHoraApartado,
+                                    fechaHoraInicio,
+                                    fechaHoraFinal,
+                                    tiempoUso,
+                                    idAlumno,
+                                    idComputadora
+                                FROM reserva
+                                WHERE idReserva = ?;
+                                """;
+            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
+            statement.setInt(1, idReserva);
+            ResultSet resultado = statement.executeQuery();
+            if (resultado.next()) {
+                Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
+                Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinal");
+
+                return new Reserva(
+                        resultado.getInt("idReserva"),
+                        resultado.getTimestamp("fechaHoraApartado").toLocalDateTime(),
+                        fechaInicio != null ? fechaInicio.toLocalDateTime() : null,
+                        fechaFinal != null ? fechaFinal.toLocalDateTime() : null,
+                        resultado.getObject("tiempoUso") != null ? resultado.getInt("tiempoUso") : null,
+                        resultado.getInt("idAlumno"),
+                        resultado.getInt("idComputadora"));
+            }
+            return null;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar la reserva por ID: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public int consultarMinutosUsadosPorAlumno(int idAlumno) throws PersistenciaException {
+        String comandoSQL = """
+                            SELECT COALESCE(SUM(tiempoUso), 0) AS minutosUsados
+                                    FROM reserva
+                                    WHERE idAlumno = ?
+                                      AND DATE(fechaHoraApartado) = CURDATE()
+                                      AND fechaHoraFinal IS NOT NULL;
+                        """;
+        try (Connection conexionBD = this.conexion.crearConexion(); PreparedStatement comando = conexionBD.prepareStatement(comandoSQL)) {
+            comando.setInt(1, idAlumno);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                return resultado.getInt("minutosUsados");
+            }
+            return 0;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar minutos usados por alumno: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -289,5 +388,87 @@ public class ReservaDAO implements IReservaDAO {
             }
             this.transaccion = null;
         }
+    }
+
+    @Override
+    public Reserva cancelar(CancelarReservaDTO reserva) throws PersistenciaException {
+        try {
+            this.transaccion = this.conexion.crearConexion();
+            this.transaccion.setAutoCommit(false);
+            Reserva reservaD = this.consultarReservaPorID(reserva.getIdReserva());
+            if (reserva == null) {
+                throw new PersistenciaException("No existe la reserva.");
+            }
+            this.cancelarReserva(reserva.getIdReserva());
+            ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora());
+            this.transaccion.commit();
+            reservaD.setFechaHoraFinal(LocalDateTime.MIN);
+            reservaD.setTiempoUso(0);
+            return reservaD;
+
+        } catch (Exception e) {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.rollback();
+                    System.out.println("Rollback realizado");
+                } catch (SQLException x) {
+                    System.out.println("No se pudo hacer un rollback");
+                }
+            }
+            throw new PersistenciaException("La transacción fue abortada: " + e.getMessage());
+        } finally {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error al crear la conexión.");
+                }
+            }
+            this.transaccion = null;
+        }
+    }
+
+    @Override
+    public Reserva finalizar(FinalizarReservaDTO reserva) throws PersistenciaException {
+        try {
+            this.transaccion = this.conexion.crearConexion();
+            this.transaccion.setAutoCommit(false);
+            Reserva reservaD = this.consultarReservaPorID(reserva.getIdReserva());
+            if (reservaD == null) {
+                throw new PersistenciaException("No existe ninguna reserva.");
+            }
+            this.finalizarReserva(reserva);
+            ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora());
+            this.transaccion.commit();
+            reservaD.setFechaHoraFinal(reserva.getFechaHoraFinal());
+            reservaD.setTiempoUso(calcularTiempoUso(reservaD.getFechaHoraInicio(), reservaD.getFechaHoraApartado(), reserva.getFechaHoraFinal()));
+            return reservaD;
+        } catch (Exception e) {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.rollback();
+                    System.out.println("Rollback realizado");
+                } catch (SQLException x) {
+                    System.out.println("No se pudo hacer un rollback");
+                }
+            }
+            throw new PersistenciaException("La transacción fue abortado: " + e.getMessage());
+        } finally {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error al crear la conexión.");
+                }
+            }
+            this.transaccion = null;
+        }
+    }
+
+    private int calcularTiempoUso(LocalDateTime fechaInicio, LocalDateTime fechaApartado, LocalDateTime fechaFinal) {
+        LocalDateTime inicioReal = fechaInicio != null ? fechaInicio : fechaApartado;
+        return (int) java.time.Duration.between(inicioReal, fechaFinal).toMinutes();
     }
 }

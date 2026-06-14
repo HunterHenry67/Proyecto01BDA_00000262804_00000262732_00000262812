@@ -17,4 +17,6 @@ public interface IComputadoraDAO {
     
     Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
     
+    void mostrarComputadoraComoDisponible(int idComputadora) throws PersistenciaException;
+    
 }

@@ -30,7 +30,13 @@ public interface IReservaDAO {
 
     void finalizarReserva(FinalizarReservaDTO reserva) throws PersistenciaException;
 
-    void cancelarReserva(CancelarReservaDTO reserva) throws PersistenciaException;
+    void cancelarReserva(int idReserva) throws PersistenciaException;
+    
+    Reserva cancelar(CancelarReservaDTO reserva) throws PersistenciaException;
+    
+    Reserva finalizar(FinalizarReservaDTO reserva) throws PersistenciaException;
+    
+    Reserva consultarReservaPorID(int idReserva) throws PersistenciaException;
 
-    int consultarMinutosUsadosPorAlumno(int idAlumno);
+    int consultarMinutosUsadosPorAlumno(int idAlumno)throws PersistenciaException;
 }
