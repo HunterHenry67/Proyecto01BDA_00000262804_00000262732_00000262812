@@ -71,7 +71,34 @@ public class BloqueoDAO implements IBloqueoDAO {
 
     @Override
     public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String comandoSQL = """
+                            UPDATE bloqueo 
+                            SET fechaHoraFinBloqueo = NOW() 
+                            WHERE idAlumno = ? 
+                              AND (fechaHoraFinBloqueo > NOW() OR fechaHoraFinBloqueo IS NULL)
+                            """;
+        
+        try (Connection conn = this.conexion.crearConexion()) {
+            
+            try {
+                conn.setAutoCommit(false);
+                
+                try (PreparedStatement statement = conn.prepareStatement(comandoSQL)) {
+                    statement.setInt(1, idAlumno);
+                    
+                    int filasAfectadas = statement.executeUpdate();
+                                        
+                    conn.commit();
+                }
+                
+            } catch (SQLException ex) {
+                conn.rollback();
+                throw new PersistenciaException ("Error en desbloqueo de alumno de BloqueoDAO");
+            }
+            
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error en la conexion, no se pudo desbloquear al alumno BloqueoDAO: " + ex.getMessage());
+        }
     }
 
     @Override
