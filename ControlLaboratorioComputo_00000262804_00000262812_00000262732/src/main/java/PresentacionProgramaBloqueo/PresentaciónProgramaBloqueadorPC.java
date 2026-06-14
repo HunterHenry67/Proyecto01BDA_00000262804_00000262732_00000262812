@@ -7,7 +7,6 @@ package PresentacionProgramaBloqueo;
 import Dtos.ComputadoraDTO;
 import Dtos.ReservaDTO;
 import Entidades.Computadora;
-import Negocio.BloqueadorBO;
 import Persistencia.PersistenciaException;
 
 /**
@@ -28,39 +27,10 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(null);
         
-        inicializarBloqueador();
+        
     }
     
-    private void inicializarBloqueador() throws PersistenciaException {
-        String ipLocal = "127.0.0.1"; 
-        try {
-            ipLocal = java.net.InetAddress.getLocalHost().getHostAddress();
-        } catch (Exception e) {
-            System.err.println("Error IP: " + e.getMessage());
-        }
-
-        BloqueadorBO negocio = new BloqueadorBO();
-        Computadora pc = negocio.buscarPCPorIP(ipLocal);
-
-        if (pc != null) {
-            lblNumeroPC.setText(String.format("%02d", pc.getNumeroMaquina()));
-            lblLaboratorio.setText("Laboratorio: " + pc.getNombreCentro());
-
-            ReservaDTO reserva = negocio.buscarReservaActiva(pc.getIdComputadora());
-
-            if (reserva != null) {
-                lblEstadoAlumno.setText(reserva.getNombreAlumno().toUpperCase());
-                this.idAlumnoReservaActual = reserva.getIdAlumno(); 
-            } else {
-                lblEstadoAlumno.setText("DISPONIBLE");
-                this.idAlumnoReservaActual = -1; 
-            }
-        } else {
-            lblNumeroPC.setText("??");
-            lblEstadoAlumno.setText("MÁQUINA NO REGISTRADA");
-            this.idAlumnoReservaActual = -1;
-        }
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -305,7 +275,37 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+<<<<<<< HEAD
     
+=======
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new PresentaciónProgramaBloqueadorPC().setVisible(true);
+            } catch (PersistenciaException ex) {
+                System.getLogger(PresentaciónProgramaBloqueadorPC.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        });
+    }
+>>>>>>> 6d63ee642b627eadccb4a343522e961006eda76b
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
