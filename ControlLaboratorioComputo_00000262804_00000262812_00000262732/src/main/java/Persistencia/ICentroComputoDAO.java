@@ -15,18 +15,9 @@ import java.util.List;
  */
 public interface ICentroComputoDAO {
 
-    CentroComputo consultarPorIDAlumno(Integer idAlumno) throws PersistenciaException;
-    
-    CentroComputo consultarPorMaquina(Integer maquina) throws PersistenciaException;
-    
-    List<CentroComputo> consultarPorNombreAlumno(String nombre) throws PersistenciaException;
-    
-    List<CentroComputo> consultarPorCarrera(String carrera) throws PersistenciaException;
-    
-    List<CentroComputo> consultarPorUnidadAcademica(String unidadAcademica) throws PersistenciaException; 
-    
-    List<CentroComputo> consultarPorCentroComputo(String centroComputo) throws PersistenciaException;
-    
-    List<CentroComputo> consultarPorHoraInicio(LocalDateTime horaInicio) throws PersistenciaException;
+    CentroComputo obtenerPorID(Integer idCentroComputo) throws PersistenciaException;
+    CentroComputo obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException;
+    CentroComputo validarContraseniaMaestra(String contraseniaMaestria) throws PersistenciaException;
+    List<CentroComputo>
     
 }
