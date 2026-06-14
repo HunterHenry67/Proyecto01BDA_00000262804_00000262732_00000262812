@@ -46,68 +46,103 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
             throw new PersistenciaException("Error al obtener el centro de cómputo por ID: " + ex.getMessage());
-        } 
+        }
     }
 
     @Override
-public List<CentroComputo> obtenerTodos() throws PersistenciaException {
-    List<CentroComputo> lista = new ArrayList<>();
-    try (Connection conexion = this.conexion.crearConexion()) {
-        String sql = """
+    public List<CentroComputo> obtenerTodos() throws PersistenciaException {
+        List<CentroComputo> lista = new ArrayList<>();
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String sql = """
                      SELECT idCentroComputo, horaInicio, horaFin, idUnidadAcademica
                      FROM centroComputo
                      """;
-        PreparedStatement statement = conexion.prepareStatement(sql);
-        ResultSet resultado = statement.executeQuery();
-        while (resultado.next()) {
-            CentroComputo cc = new CentroComputo();
-            cc.setIdCentroComputo(resultado.getInt("idCentroComputo"));
-            cc.setHoraInicio(resultado.getTime("horaInicio"));
-            cc.setHOranFin(resultado.getTime("horaFin"));
-            cc.setIdUnidadAcademica(resultado.getInt("idUnidadAcademica"));
-            lista.add(cc);
+            PreparedStatement statement = conexion.prepareStatement(sql);
+            ResultSet resultado = statement.executeQuery();
+            while (resultado.next()) {
+                CentroComputo cc = new CentroComputo();
+                cc.setIdCentroComputo(resultado.getInt("idCentroComputo"));
+                cc.setHoraInicio(resultado.getTime("horaInicio"));
+                cc.setHOranFin(resultado.getTime("horaFin"));
+                cc.setIdUnidadAcademica(resultado.getInt("idUnidadAcademica"));
+                lista.add(cc);
+            }
+            return lista;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al obtener todos los centros de cómputo: " + ex.getMessage());
         }
-        return lista;
-    } catch (SQLException ex) {
-        LOGGER.severe(ex.getMessage());
-        throw new PersistenciaException("Error al obtener todos los centros de cómputo: " + ex.getMessage());
     }
-}
 
-@Override
-public List<CentroComputo> obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException {
-    List<CentroComputo> lista = new ArrayList<>();
-    try (Connection conexion = this.conexion.crearConexion()) {
-        String sql = """
+    @Override
+    public List<CentroComputo> obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException {
+        List<CentroComputo> lista = new ArrayList<>();
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String sql = """
                      SELECT idCentroComputo, horaInicio, horaFin, idUnidadAcademica
                      FROM centroComputo
                      WHERE idUnidadAcademica = ?
                      """;
-        PreparedStatement statement = conexion.prepareStatement(sql);
-        statement.setInt(1, idUnidadAcademica);
-        ResultSet resultado = statement.executeQuery();
-        while (resultado.next()) {
-            CentroComputo cc = new CentroComputo();
-            cc.setIdCentroComputo(resultado.getInt("idCentroComputo"));
-            cc.setHoraInicio(resultado.getTime("horaInicio"));
-            cc.setHOranFin(resultado.getTime("horaFin"));
-            cc.setIdUnidadAcademica(resultado.getInt("idUnidadAcademica"));
-            lista.add(cc);
+            PreparedStatement statement = conexion.prepareStatement(sql);
+            statement.setInt(1, idUnidadAcademica);
+            ResultSet resultado = statement.executeQuery();
+            while (resultado.next()) {
+                CentroComputo cc = new CentroComputo();
+                cc.setIdCentroComputo(resultado.getInt("idCentroComputo"));
+                cc.setHoraInicio(resultado.getTime("horaInicio"));
+                cc.setHOranFin(resultado.getTime("horaFin"));
+                cc.setIdUnidadAcademica(resultado.getInt("idUnidadAcademica"));
+                lista.add(cc);
+            }
+            return lista;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al obtener centros por unidad académica: " + ex.getMessage());
         }
-        return lista;
-    } catch (SQLException ex) {
-        LOGGER.severe(ex.getMessage());
-        throw new PersistenciaException("Error al obtener centros por unidad académica: " + ex.getMessage());
     }
-}
 
     @Override
     public CentroComputo obtenerPorComputadora(Integer idComputadora) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String sql = """
+                     SELECT cc.idCentroComputo, cc.horaInicio, cc.horaFin, cc.idUnidadAcademica
+                     FROM centroComputo cc
+                     INNER JOIN computadora c ON c.idCentroComputo = cc.idCentroComputo
+                     WHERE c.idComputadora = ?
+                     """;
+            PreparedStatement statement = conexion.prepareStatement(sql);
+            statement.setInt(1, idComputadora);
+            ResultSet resultado = statement.executeQuery();
+            if (resultado.next()) {
+                CentroComputo cc = new CentroComputo();
+                cc.setIdCentroComputo(resultado.getInt("idCentroComputo"));
+                cc.setHoraInicio(resultado.getTime("horaInicio"));
+                cc.setHOranFin(resultado.getTime("horaFin"));
+                cc.setIdUnidadAcademica(resultado.getInt("idUnidadAcademica"));
+                return cc;
+            }
+            return null;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al obtener el centro de cómputo por computadora: " + ex.getMessage());
+        }
     }
 
     @Override
     public boolean validarContraseniaMaestra(String contraseniaMaestra) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (Connection conexion = this.conexion.crearConexion()) {
+            String sql = """
+                     SELECT idCentroComputo
+                     FROM centroComputo
+                     WHERE contrasenaMaestra = ?
+                     """;
+            PreparedStatement statement = conexion.prepareStatement(sql);
+            statement.setString(1, contraseniaMaestra);
+            ResultSet resultado = statement.executeQuery();
+            return resultado.next();
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al validar la contraseña maestra: " + ex.getMessage());
+        }
     }
 }
