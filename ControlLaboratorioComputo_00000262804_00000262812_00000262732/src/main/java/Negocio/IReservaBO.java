@@ -16,25 +16,15 @@ import java.util.List;
  */
 public interface IReservaBO {
     
-    Reserva apartarComputadora(Integer idAlumno, Integer idComputadora) throws NegocioException;
+    Reserva guardar(GuardarReservaDTO reserva) throws NegocioException;
 
-    Reserva guardar(GuardarReservaDTO reservaDTO) throws NegocioException;
+    Reserva cancelar(CancelarReservaDTO reserva) throws NegocioException;
 
-    Reserva cancelar(CancelarReservaDTO cancelarReservaDTO) throws NegocioException;
-
-    Reserva finalizar(FinalizarReservaDTO finalizarReservaDTO) throws NegocioException;
-
-    Reserva finalizar(Integer idReserva) throws NegocioException;
+    Reserva finalizar(FinalizarReservaDTO reserva) throws NegocioException;
 
     Reserva consultarReservaPorID(Integer idReserva) throws NegocioException;
-
-    Reserva consultarReservaActivaPorAlumno(Integer idAlumno) throws NegocioException;
-
-    Reserva consultarReservaActivaPorComputadora(Integer idComputadora) throws NegocioException;
 
     List<Reserva> consultar(String filtro) throws NegocioException;
 
     List<Reserva> consultarReservasActivas() throws NegocioException;
-
-    int consultarMinutosUsadosPorAlumno(Integer idAlumno) throws NegocioException;
 }
