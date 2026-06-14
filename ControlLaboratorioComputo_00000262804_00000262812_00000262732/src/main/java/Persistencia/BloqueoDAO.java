@@ -33,24 +33,24 @@ public class BloqueoDAO implements IBloqueoDAO {
                             INSERT INTO bloqueo (fechaHoraInicioBloqueo, fechaHoraFinBloqueo, motivo, idAlumno)
                             VALUES (?, ?, ?, ?)
                             """;
-        
+
         try (Connection conn = this.conexion.crearConexion()) {
-            
+
             try {
                 conn.setAutoCommit(false);
-                
+
                 try (PreparedStatement statement = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
-                    
+
                     statement.setObject(1, bloqueo.getFechaHoraIncioBloqueo());
                     statement.setObject(2, bloqueo.getFechaHoraFinalBloqueo());
                     statement.setString(3, bloqueo.getMotivo());
                     statement.setInt(4, bloqueo.getIdAlumno());
-                    
+
                     int filasAfectadas = statement.executeUpdate();
-                    
+
                     if (filasAfectadas == 0) {
                         throw new SQLException("La inserción falló");
-                    }               
+                    }
                     try (ResultSet llavesGeneradas = statement.getGeneratedKeys()) {
                         if (llavesGeneradas.next()) {
                             bloqueo.setIdBloqueo(llavesGeneradas.getInt(1));
@@ -59,12 +59,12 @@ public class BloqueoDAO implements IBloqueoDAO {
                     conn.commit();
                     return bloqueo;
                 }
-                
+
             } catch (SQLException ex) {
                 conn.rollback();
                 throw new PersistenciaException("Error al registrar bloqueo en bloqueoDAO " + ex.getMessage());
             }
-            
+
         } catch (SQLException ex) {
             throw new PersistenciaException("Error en la conexion, no se pudo registrar el bloqueo: " + ex.getMessage());
         }
@@ -78,27 +78,27 @@ public class BloqueoDAO implements IBloqueoDAO {
                             WHERE idAlumno = ? 
                               AND (fechaHoraFinBloqueo > NOW() OR fechaHoraFinBloqueo IS NULL)
                             """;
-        
+
         try (Connection conn = this.conexion.crearConexion()) {
-            
+
             try {
                 conn.setAutoCommit(false);
-                
+
                 try (PreparedStatement statement = conn.prepareStatement(comandoSQL)) {
                     statement.setInt(1, idAlumno);
-                    
+
                     int filasAfectadas = statement.executeUpdate();
                     if (filasAfectadas == 0) {
                         throw new PersistenciaException("No se encontró ningún bloqueopara este alumno.");
-                    }                                       
+                    }
                     conn.commit();
                 }
-                
+
             } catch (SQLException ex) {
                 conn.rollback();
-                throw new PersistenciaException ("Error en desbloqueo de alumno de BloqueoDAO");
+                throw new PersistenciaException("Error en desbloqueo de alumno de BloqueoDAO");
             }
-            
+
         } catch (SQLException ex) {
             throw new PersistenciaException("Error en la conexion, no se pudo desbloquear al alumno BloqueoDAO: " + ex.getMessage());
         }
@@ -154,27 +154,26 @@ public class BloqueoDAO implements IBloqueoDAO {
                             FROM bloqueo
                             WHERE fechaHoraFinBloqueo > NOW() OR fechaHoraFinBloqueo IS NULL
                             """;
-            
-            try (Connection conn = this.conexion.crearConexion();
-               PreparedStatement statement = conn.prepareStatement(comandoSQL);
-               ResultSet resultado = statement.executeQuery()) {
-            
-                while (resultado.next()) {
-                    Bloqueo bloqueo = new Bloqueo();
 
-                    bloqueo.setIdBloqueo(resultado.getInt("idBloqueo"));
-                    bloqueo.setFechaHoraIncioBloqueo(resultado.getObject("fechaHoraInicioBloqueo", java.time.LocalDateTime.class));
-                    bloqueo.setFechaHoraFinalBloqueo(resultado.getObject("fechaHoraFinBloqueo", java.time.LocalDateTime.class));
-                    bloqueo.setMotivo(resultado.getString("motivo"));
-                    bloqueo.setIdAlumno(resultado.getInt("idAlumno"));
+        try (Connection conn = this.conexion.crearConexion(); 
+            PreparedStatement statement = conn.prepareStatement(comandoSQL); ResultSet resultado = statement.executeQuery()) {
 
-                    listaBloqueos.add(bloqueo);
-                }
+            while (resultado.next()) {
+                Bloqueo bloqueo = new Bloqueo();
 
-            } catch (SQLException ex) {
-                throw new PersistenciaException("Error al buscar los bloqueos activos: " + ex.getMessage());
+                bloqueo.setIdBloqueo(resultado.getInt("idBloqueo"));
+                bloqueo.setFechaHoraIncioBloqueo(resultado.getObject("fechaHoraInicioBloqueo", java.time.LocalDateTime.class));
+                bloqueo.setFechaHoraFinalBloqueo(resultado.getObject("fechaHoraFinBloqueo", java.time.LocalDateTime.class));
+                bloqueo.setMotivo(resultado.getString("motivo"));
+                bloqueo.setIdAlumno(resultado.getInt("idAlumno"));
+
+                listaBloqueos.add(bloqueo);
             }
-        
+
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al buscar los bloqueos activos: " + ex.getMessage());
+        }
+
         return listaBloqueos;
     }
 
