@@ -23,7 +23,8 @@ import java.util.logging.Logger;
 public class ComputadoraDAO implements IComputadoraDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ComputadoraDAO.class.getName());
-    
+
+    private Connection transaccion;
 
     private IConexionBD conexion;
 
@@ -67,8 +68,6 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
     }
 
-
-
     @Override
     public Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException {
         String sql = """
@@ -82,9 +81,8 @@ public class ComputadoraDAO implements IComputadoraDAO {
                      FROM Computadora
                      WHERE idComputadora = ? AND status = true
                      """;
-        try (Connection conn = this.conexion.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = this.conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, idComputadora);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -92,10 +90,10 @@ public class ComputadoraDAO implements IComputadoraDAO {
                     pc.setIdComputadora(rs.getInt("idComputadora"));
                     pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
                     pc.setIp(rs.getString("direccionIP"));
-                    pc.setEstatus(rs.getBoolean("estatus")); 
+                    pc.setEstatus(rs.getBoolean("estatus"));
                     pc.setTipo(rs.getString("tipo"));
                     pc.setIdCentroComputo(rs.getInt("idCentroComputo"));
-                    
+
                     return pc;
                 }
             }
@@ -103,29 +101,25 @@ public class ComputadoraDAO implements IComputadoraDAO {
             throw new PersistenciaException("Error en ComputadoraDao al obtener status de pc por id");
         }
         return null;
-        
+
     }
-        
 
     @Override
-    public void mostrarComputadoraComoDisponible(int idComputadora) throws PersistenciaException {
-        try(Connection conexion = this.conexion.crearConexion()){
-            String comandoSQL = """
-                                UPDATE computadora
-                                    SET estatus = 'APARTADA'
-                                    WHERE idComputadora = ?;
-                                """;
-            PreparedStatement statement = conexion.prepareStatement(comandoSQL);
+    public void mostrarComputadoraComoDisponible(int idComputadora, Connection transaccion) throws PersistenciaException {
+        String comandoSQL = """
+                        UPDATE computadora
+                        SET estatus = true
+                        WHERE idComputadora = ?;
+                        """;
+        try (PreparedStatement statement = transaccion.prepareStatement(comandoSQL)) {
             statement.setInt(1, idComputadora);
             int filasCambiadas = statement.executeUpdate();
-            
-            if(filasCambiadas == 0){
-                throw new PersistenciaException("No fue posible mostrar la computadora como apartada.");
+            if (filasCambiadas == 0) {
+                throw new PersistenciaException("No fue posible mostrar la computadora como disponible.");
             }
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al mostrar computadora disponible: "+ex.getMessage());
-            
+            throw new PersistenciaException("Error al mostrar computadora disponible: " + ex.getMessage());
         }
     }
 
@@ -175,4 +169,3 @@ public class ComputadoraDAO implements IComputadoraDAO {
     }
 
 }
-
