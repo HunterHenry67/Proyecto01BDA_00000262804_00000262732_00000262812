@@ -4,15 +4,17 @@
  */
 package Persistencia;
 
-import Dtos.ObtenerCatalogoSoftwareDTO;
+import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
-import java.util.List;
 
 /**
  *
  * @author BALAMRUSH
  */
 public interface IComputadoraDAO {
+    
     Computadora obtenerPCPorIP(String ip) throws PersistenciaException;
+    
+    Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException;
     
 }
