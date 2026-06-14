@@ -97,13 +97,13 @@ public class ReservaDAO implements IReservaDAO {
             if (resultado.next()) {
                 Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
                 Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinal");
-                return new Reserva(resultado.getInt("idReserva"),
+                listaReservasActivas.add(new Reserva(resultado.getInt("idReserva"),
                         resultado.getTimestamp("fechaHoraApartado").toLocalDateTime(),
                         fechaInicio != null ? fechaInicio.toLocalDateTime() : null,
                         fechaFinal != null ? fechaFinal.toLocalDateTime() : null,
                         resultado.getObject("tiempoUso") != null ? resultado.getInt("tiempoUso") : null,
                         resultado.getInt("idAlumno"),
-                        resultado.getInt("idComputadora"));
+                        resultado.getInt("idComputadora")));
             }
             return null;
         } catch (SQLException ex) {
@@ -131,9 +131,14 @@ public class ReservaDAO implements IReservaDAO {
             ps.setInt(1, idComputadora);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    Timestamp fechaInicio = rs.getTimestamp("fechaHoraInicio");
+                    Timestamp fechaFinal = rs.getTimestamp("fechaHoraFinal");
                     Reserva reserva = new Reserva();
                     reserva.setIdReserva(rs.getInt("idReserva"));
                     reserva.setFechaHoraApartado(rs.getTimestamp("fechaHoraApartado").toLocalDateTime());
+                    reserva.setFechaHoraInicio(fechaInicio != null ? fechaInicio.toLocalDateTime() : null);
+                    reserva.setFechaHoraFinal(fechaFinal != null ? fechaFinal.toLocalDateTime() : null);
+                    reserva.setTiempoUso(rs.getObject("tiempoUso") != null ? rs.getInt("tiempoUso") : null);
                     reserva.setIdAlumno(rs.getInt("idAlumno"));
                     reserva.setIdComputadora(rs.getInt("idComputadora"));
                     return reserva;
@@ -173,7 +178,7 @@ public class ReservaDAO implements IReservaDAO {
                                   OR CONCAT(a.nombre, ' ', a.apellidoPaterno, ' ', a.apellidoMaterno) LIKE ?
                                   OR CAST(c.numeroMaquina AS CHAR) LIKE ?
                                   OR c.direccionIP LIKE ?
-                                  OR c.estatus LIKE ?
+                                  OR CAST(c.estatus AS CHAR) LIKE ?
                                   OR c.tipo LIKE ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);

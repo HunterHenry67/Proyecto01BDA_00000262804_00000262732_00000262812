@@ -43,7 +43,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
                      tipo,
                      idCentroComputo
                      FROM Computadora
-                     WHERE direccionIp = ?
+                     WHERE direccionIP = ?
                      """;
 
         try (Connection conn = this.conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -54,7 +54,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
                     Computadora pc = new Computadora();
                     pc.setIdComputadora(rs.getInt("idComputadora"));
                     pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
-                    pc.setIp(rs.getString("direccionIp"));
+                    pc.setIp(rs.getString("direccionIP"));
                     pc.setEstatus(rs.getBoolean("estatus"));
                     pc.setTipo(rs.getString("tipo"));
                     pc.setIdCentroComputo(rs.getInt("idCentroComputo"));

@@ -243,12 +243,12 @@ public class NewMain {
         }
 
         // mostrarComputadoraComoDisponible
-        try {
-            dao.mostrarComputadoraComoDisponible(ID_COMPUTADORA);
-            System.out.println("[mostrarComputadoraComoDisponible] PC " + ID_COMPUTADORA + " marcada como disponible.");
-        } catch (PersistenciaException e) {
-            System.out.println("[mostrarComputadoraComoDisponible] ERROR: " + e.getMessage());
-        }
+//        try {
+//            dao.mostrarComputadoraComoDisponible(ID_COMPUTADORA);
+//            System.out.println("[mostrarComputadoraComoDisponible] PC " + ID_COMPUTADORA + " marcada como disponible.");
+//        } catch (PersistenciaException e) {
+//            System.out.println("[mostrarComputadoraComoDisponible] ERROR: " + e.getMessage());
+//        }
     }
 
     // =========================================================

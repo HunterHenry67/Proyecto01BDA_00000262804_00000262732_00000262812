@@ -83,7 +83,7 @@ public class AlumnoDAO implements IAlumnoDAO {
                                     idCarrera
                                 FROM alumno
                                 WHERE nombre LIKE ?
-                                   OR estatus LIKE ?;
+                                   OR CAST(estatus AS CHAR) LIKE ?;
                             """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             String busquedaFiltro = "%" + filtro + "%";
@@ -144,25 +144,25 @@ public class AlumnoDAO implements IAlumnoDAO {
     }
 
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
-        try (Connection conexion = this.conexion.crearConexion()) {
-            String comandoSQL = """
-                                
-                                SELECT COUNT(*) AS total
-                                    FROM bloqueo
-                                    WHERE idAlumno = ?;
-                                """;
-            PreparedStatement statment = conexion.prepareStatement(comandoSQL);
-            statment.setInt(1, idAlumno);
-            ResultSet resultado = statment.executeQuery();
+        String comandoSQL = """
+                        SELECT COUNT(*) AS total
+                        FROM bloqueo
+                        WHERE idAlumno = ?
+                        AND (fechaHoraFinBloqueo IS NULL OR fechaHoraFinBloqueo > NOW());
+                        """;
 
-            if (resultado.next()) {
-                int total = resultado.getInt("total");
-                return total > 0;
+        try (Connection conexion = this.conexion.crearConexion(); 
+             PreparedStatement statement = conexion.prepareStatement(comandoSQL)) {
+            statement.setInt(1, idAlumno);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt("total")>0;
+                }
             }
             return false;
         } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: " + ex.getMessage());
+            throw new PersistenciaException("Error al identificar si el alumno está bloqueado: "+ ex.getMessage());
         }
     }
 }
