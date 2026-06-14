@@ -29,24 +29,6 @@ public class AlumnoDAO implements IAlumnoDAO {
     }
 
     @Override
-    public boolean validarCredenciales(int idAlumno, String contrasena) {
-        String sql = "SELECT idAlumno FROM ALUMNO WHERE idAlumno = ? AND contrasena = ?";
-
-        try (Connection conn = conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, idAlumno);
-            ps.setString(2, contrasena);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException e) {
-            System.err.println("Error en AlumnoDAO.validarCredenciales: " + e.getMessage());
-        }
-        return false;
-    }
-
-    @Override
     public List<Alumno> consultar(String filtro) throws PersistenciaException {
         List<Alumno> listaAlumnos = new ArrayList<>();
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -134,6 +116,44 @@ public class AlumnoDAO implements IAlumnoDAO {
 
     @Override
     public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String comandoSQL = """
+                            SELECT
+                                idAlumno,
+                                nombre,
+                                apellidoPaterno,
+                                apellidoMaterno,
+                                estatus,
+                                contrasena,
+                                idCarrera
+                            FROM alumno
+                            WHERE idAlumno = ? AND contrasena = ?
+                            """;
+        
+        try (Connection conn = this.conexion.crearConexion();
+             PreparedStatement statement = conn.prepareStatement(comandoSQL)) {
+            
+            statement.setInt(1, idAlumno);
+            statement.setString(2, contrasena);
+            
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    Alumno alumno = new Alumno();
+                    
+                    alumno.setIdAlumno(resultado.getInt("idAlumno"));
+                    alumno.setNombres(resultado.getString("nombre"));
+                    alumno.setApellidoPaterno(resultado.getString("apellidoPaterno"));
+                    alumno.setApellidoMaterno(resultado.getString("apellidoMaterno"));
+                    alumno.setEstatus(resultado.getBoolean("estatus"));
+                    alumno.setContrasenia(resultado.getString("contrasena"));
+                    alumno.setIdCarrera(resultado.getInt("idCarrera"));
+                    
+                    return alumno;
+                }
+            }
+            
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al consultar las credenciales: " + ex.getMessage());
+        }
+        return null;
     }
 }
