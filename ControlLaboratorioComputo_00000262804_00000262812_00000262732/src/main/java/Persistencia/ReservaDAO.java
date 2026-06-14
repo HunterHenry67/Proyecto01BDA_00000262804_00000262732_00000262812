@@ -4,7 +4,9 @@
  */
 package Persistencia;
 
-import Dtos.ReservaDTO;
+import Dtos.CancelarReservaDTO;
+import Dtos.FinalizarReservaDTO;
+import Dtos.GuardarReservaDTO;
 import Entidades.Reserva;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +36,7 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     @Override
-    public Reserva registrarReserva(Reserva reserva) throws PersistenciaException {
+    public int registrarReserva(GuardarReservaDTO reserva) throws PersistenciaException {
         try {
             String comandoSQL = """
                                 INSERT INTO reserva(
@@ -63,11 +65,9 @@ public class ReservaDAO implements IReservaDAO {
             statement.executeUpdate();
             ResultSet resultado = statement.getGeneratedKeys();
             if (resultado.next()) {
-               int idGenerado = resultado.getInt(1);
-               reserva.setIdAlumno(idGenerado);
+                return resultado.getInt(1);
             }
-            return reserva;
-
+            throw new PersistenciaException("No fue posbile obtener el id de la reserva generada.");
         } catch (SQLException ex) {
             throw new PersistenciaException("Error al registrar la Reserva: " + ex.getMessage());
         }
@@ -240,12 +240,12 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     @Override
-    public void finalizarReserva(int idReserva, LocalDateTime fechaFinalizacion) throws PersistenciaException {
+    public void finalizarReserva(FinalizarReservaDTO reserva) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void cancelarReserva(int idReserva) throws PersistenciaException {
+    public void cancelarReserva(CancelarReservaDTO reserva) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -254,4 +254,40 @@ public class ReservaDAO implements IReservaDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    @Override
+    public Reserva guardar(GuardarReservaDTO reserva) throws PersistenciaException {
+        try {
+            this.transaccion = conexion.crearConexion();
+            this.transaccion.setAutoCommit(false);
+            int idRegistroGenerado = this.registrarReserva(reserva);
+            this.transaccion.commit();
+            return new Reserva(idRegistroGenerado,
+                    reserva.getFechaHoraApartado(),
+                    null,
+                    null,
+                    null,
+                    reserva.getIdAlumno(),
+                    reserva.getIdComputadora());
+
+        } catch (Exception ex) {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.rollback();
+                    System.out.println("Rollback realizado");
+                } catch (SQLException x) {
+                    System.out.println("No se pudo hacer un rollback");
+                }
+            }
+            throw new PersistenciaException("La transacción fue abortada: " + ex.getMessage());
+        } finally {
+            if (this.transaccion != null) {
+                try {
+                    this.transaccion.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error al crear la conexión.");
+                }
+            }
+            this.transaccion = null;
+        }
+    }
 }
