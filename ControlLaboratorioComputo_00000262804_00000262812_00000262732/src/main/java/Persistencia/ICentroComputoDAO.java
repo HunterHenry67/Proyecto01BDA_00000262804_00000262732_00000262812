@@ -16,8 +16,12 @@ import java.util.List;
 public interface ICentroComputoDAO {
 
     CentroComputo obtenerPorID(Integer idCentroComputo) throws PersistenciaException;
-    CentroComputo obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException;
-    CentroComputo validarContraseniaMaestra(String contraseniaMaestria) throws PersistenciaException;
-    List<CentroComputo>
-    
+
+    List<CentroComputo> obtenerTodos() throws PersistenciaException;
+
+    List<CentroComputo> obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException;
+
+    CentroComputo obtenerPorComputadora(Integer idComputadora) throws PersistenciaException;
+
+    boolean validarContraseniaMaestra(String contraseniaMaestra) throws PersistenciaException;
 }
