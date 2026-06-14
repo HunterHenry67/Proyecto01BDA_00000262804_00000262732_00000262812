@@ -20,7 +20,11 @@ import java.util.List;
  */
 public class SoftwareDAO implements ISoftwareDAO {
 
-    private final ConexionBD conexion = new ConexionBD();
+    private IConexionBD conexion;
+
+    public SoftwareDAO(IConexionBD conexion) {
+        this.conexion = conexion;
+    }
 
     @Override
     public List<Software> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException {
