@@ -24,17 +24,17 @@ public class AlumnoDAO implements IAlumnoDAO {
     private IConexionBD conexion;
     private Connection transaccion;
 
-    public AlumnoDAO(){
-        
+    public AlumnoDAO() {
+
     }
-    
+
     public AlumnoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
 
     @Override
-    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException{
-        try(Connection conexion = this.conexion.crearConexion()){
+    public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
+        try (Connection conexion = this.conexion.crearConexion()) {
             String comandoSQL = """
                                 SELECT idAlumno,
                                        nombre,
@@ -44,27 +44,27 @@ public class AlumnoDAO implements IAlumnoDAO {
                                        contrasena,
                                        idCarrera
                                 FROM alumno
-                                WHERE idAlumno = ?
-                                    OR contrasena = ?;
+                                WHERE idAlumno = ? 
+                                    AND contrasena = ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
             statement.setString(2, contrasena);
             ResultSet resultado = statement.executeQuery();
-            
-            if(resultado.next()){
+
+            if (resultado.next()) {
                 return new Alumno(resultado.getInt("idAlumno"),
-                                  resultado.getString("nombre"),
-                                  resultado.getString("apellidoMaterno"),
-                                  resultado.getString("apellidoPaterno"),
-                                  resultado.getBoolean("estatus"),
-                                  resultado.getString("constrasena"),
-                                  resultado.getInt("idCarrera"));
+                        resultado.getString("nombre"),
+                        resultado.getString("apellidoPaterno"),
+                        resultado.getString("apellidoMaterno"),
+                        resultado.getBoolean("estatus"),
+                        resultado.getString("contrasena"),
+                        resultado.getInt("idCarrera"));
             }
             return null;
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar las credenciales del alumno: " +ex.getMessage());
+            throw new PersistenciaException("Error al consultar las credenciales del alumno: " + ex.getMessage());
         }
     }
 
@@ -92,13 +92,13 @@ public class AlumnoDAO implements IAlumnoDAO {
             ResultSet resultado = statement.executeQuery();
             while (resultado.next()) {
                 listaAlumnos.add(new Alumno(
-                    resultado.getInt("idAlumno"),
-                    resultado.getString("nombre"),
-                    resultado.getString("apellidoPaterno"),
-                    resultado.getString("apellidoMaterno"),  
-                    resultado.getBoolean("estatus"),
-                    resultado.getString("contrasena"),
-                    resultado.getInt("idCarrera")
+                        resultado.getInt("idAlumno"),
+                        resultado.getString("nombre"),
+                        resultado.getString("apellidoPaterno"),
+                        resultado.getString("apellidoMaterno"),
+                        resultado.getBoolean("estatus"),
+                        resultado.getString("contrasena"),
+                        resultado.getInt("idCarrera")
                 ));
             }
             return listaAlumnos;

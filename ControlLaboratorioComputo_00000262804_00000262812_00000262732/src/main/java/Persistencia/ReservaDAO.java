@@ -364,13 +364,15 @@ public class ReservaDAO implements IReservaDAO {
             this.transaccion.setAutoCommit(false);
             int idRegistroGenerado = this.registrarReserva(reserva);
             this.transaccion.commit();
-            return new Reserva(idRegistroGenerado,
+            return new Reserva(
+                    idRegistroGenerado,
                     reserva.getFechaHoraApartado(),
+                    reserva.getFechaHoraInicio(),
                     null,
-                    null,
-                    null,
+                    reserva.getTiempoUso(),
                     reserva.getIdAlumno(),
-                    reserva.getIdComputadora());
+                    reserva.getIdComputadora()
+            );
 
         } catch (Exception ex) {
             if (this.transaccion != null) {
@@ -406,7 +408,7 @@ public class ReservaDAO implements IReservaDAO {
             this.cancelarReserva(reserva.getIdReserva());
 
             ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
-            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(),this.transaccion);
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(), this.transaccion);
             this.transaccion.commit();
             reservaD.setFechaHoraFinal(LocalDateTime.now());
             reservaD.setTiempoUso(0);
@@ -445,7 +447,7 @@ public class ReservaDAO implements IReservaDAO {
             }
             this.finalizarReserva(reserva);
             ComputadoraDAO computadoraDAO = new ComputadoraDAO(this.conexion);
-            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(),this.transaccion);
+            computadoraDAO.mostrarComputadoraComoDisponible(reservaD.getIdComputadora(), this.transaccion);
             this.transaccion.commit();
             reservaD.setFechaHoraFinal(reserva.getFechaHoraFinal());
             reservaD.setTiempoUso(calcularTiempoUso(reservaD.getFechaHoraInicio(), reservaD.getFechaHoraApartado(), reserva.getFechaHoraFinal()));

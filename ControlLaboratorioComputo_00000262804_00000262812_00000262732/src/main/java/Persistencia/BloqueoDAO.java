@@ -109,12 +109,12 @@ public class BloqueoDAO implements IBloqueoDAO {
                                 SELECT
                                     idBloqueo,
                                     fechaHoraInicioBloqueo,
-                                    fechaHoraFinalBloqueo,
+                                    fechaHoraFinBloqueo,
                                     motivo,
                                     idAlumno
                                 FROM bloqueo
                                 WHERE DATE_FORMAT(fechaHoraInicioBloqueo, '%Y-%m-%d %H:%i:%s') LIKE ?
-                                           OR DATE_FORMAT(fechaHoraFinalBloqueo, '%Y-%m-%d %H:%i:%s') LIKE ?;
+                                           OR DATE_FORMAT(fechaHoraFinBloqueo, '%Y-%m-%d %H:%i:%s') LIKE ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             String busquedaFiltro = "%" + filtro + "%";
@@ -123,7 +123,7 @@ public class BloqueoDAO implements IBloqueoDAO {
 
             ResultSet resultado = statement.executeQuery();
             while (resultado.next()) {
-                Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinalBloqueo");
+                Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinBloqueo");
                 listaBloqueosFiltrada.add(new Bloqueo(
                         resultado.getInt("idBloqueo"),
                         resultado.getTimestamp("fechaHoraInicioBloqueo").toLocalDateTime(),
