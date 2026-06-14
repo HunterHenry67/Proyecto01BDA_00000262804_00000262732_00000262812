@@ -4,6 +4,9 @@
  */
 package Persistencia;
 import Entidades.CentroComputo;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -12,9 +15,9 @@ import Entidades.CentroComputo;
  */
 public interface ICentroComputoDAO {
 
-    CentroComputo consultarPorID(ConsultarCentroComputoDTO ) throws PersistenciaException;
-    CentroComputo consultarPorMaquina(ConsultarMaquinaCentroComputoDTO ) throws PersistenciaException;
-    CentroComputo consultarPorNombre(ConsultarAlumnoCentroComputoDTO) throws PersistenciaException;
-    
+    CentroComputo obtenerPorID(Integer idCentroComputo) throws PersistenciaException;
+    CentroComputo obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException;
+    CentroComputo validarContraseniaMaestra(String contraseniaMaestria) throws PersistenciaException;
+    List<CentroComputo>
     
 }

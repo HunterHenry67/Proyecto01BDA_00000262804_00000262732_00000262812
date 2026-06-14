@@ -2,15 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Persistencia;
-
-import Entidades.CentroComputo;
-
+package Negocio;
 
 /**
  *
  * @author Andre
  */
-public class CentroComputoDAO implements ICentroComputoDAO {
-
+public class CentroComputoBO{
+    
 }
