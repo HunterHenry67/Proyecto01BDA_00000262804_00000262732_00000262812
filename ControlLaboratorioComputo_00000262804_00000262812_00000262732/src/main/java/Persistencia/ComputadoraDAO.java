@@ -6,6 +6,7 @@ package Persistencia;
 
 import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
+import Persistencia.PersistenciaException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,16 +64,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
     }
 
-<<<<<<< HEAD
-    @Override
-    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-=======
-        @Override
-        public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
+
 
     @Override
     public Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException {
@@ -110,9 +102,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
         
     }
-}
         
->>>>>>> 6d63ee642b627eadccb4a343522e961006eda76b
 
     @Override
     public void mostrarComputadoraComoDisponible(int idComputadora) throws PersistenciaException {
@@ -134,5 +124,10 @@ public class ComputadoraDAO implements IComputadoraDAO {
             throw new PersistenciaException("Error al mostrar computadora disponible: "+ex.getMessage());
             
         }
+    }
+
+    @Override
+    public Computadora obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
