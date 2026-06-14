@@ -97,13 +97,13 @@ public class ReservaDAO implements IReservaDAO {
             if (resultado.next()) {
                 Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
                 Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinal");
-                return new Reserva(resultado.getInt("idReserva"),
+                listaReservasActivas.add(new Reserva(resultado.getInt("idReserva"),
                         resultado.getTimestamp("fechaHoraApartado").toLocalDateTime(),
                         fechaInicio != null ? fechaInicio.toLocalDateTime() : null,
                         fechaFinal != null ? fechaFinal.toLocalDateTime() : null,
                         resultado.getObject("tiempoUso") != null ? resultado.getInt("tiempoUso") : null,
                         resultado.getInt("idAlumno"),
-                        resultado.getInt("idComputadora"));
+                        resultado.getInt("idComputadora")));
             }
             return null;
         } catch (SQLException ex) {
