@@ -19,8 +19,8 @@ public class CentroComputoBO {
     private static final Logger LOGGER = Logger.getLogger(CentroComputoBO.class.getName());
     private ICentroComputoDAO centroComputoDAO;
 
-    public CentroComputoBO(IConexionBD conexion) {
-        this.centroComputoDAO = new CentroComputoDAO();
+    public CentroComputoBO(ICentroComputoDAO centroComputoDAO) {
+        this.centroComputoDAO = centroComputoDAO;
     }
 
     public boolean validarHorarioServicio(Integer idCentroComputo) throws NegocioException {

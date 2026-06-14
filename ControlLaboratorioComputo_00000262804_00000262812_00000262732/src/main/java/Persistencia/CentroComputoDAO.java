@@ -23,6 +23,10 @@ public class CentroComputoDAO implements ICentroComputoDAO {
 
     private IConexionBD conexion;
 
+    public CentroComputoDAO(IConexionBD conexion) {
+        this.conexion = conexion;
+    }
+
     @Override
     public CentroComputo obtenerPorID(Integer idCentroComputo) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {

@@ -20,8 +20,8 @@ public class NewMain {
 
     public static void main(String[] args) {
         try {
-            ICentroComputoDAO daoFake = new CentroComputoDAOFake();
-            CentroComputoBO centroBO = new CentroComputoBO((IConexionBD) daoFake);
+            ICentroComputoDAO dao = new CentroComputoDAOFake();
+            CentroComputoBO centroBO = new CentroComputoBO(dao);
 
             probarHorarioCentroAbierto(centroBO);
             probarCentroInexistente(centroBO);
@@ -32,6 +32,7 @@ public class NewMain {
 
         } catch (Exception e) {
             System.out.println("Error general en pruebas: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -76,7 +77,7 @@ public class NewMain {
     private static void probarObtenerCentrosPorUnidad(CentroComputoBO centroBO) throws NegocioException {
         List<CentroComputo> centros = centroBO.obtenerCentrosPorUnidad(1);
 
-        if (!centros.isEmpty()) {
+        if (centros != null && !centros.isEmpty()) {
             System.out.println("OK - Centros obtenidos por unidad académica");
         } else {
             System.out.println("FALLO - Debería regresar centros");
@@ -136,7 +137,7 @@ public class NewMain {
         public List<CentroComputo> obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException {
             List<CentroComputo> centros = new ArrayList<>();
 
-            if (idUnidadAcademica == 1) {
+            if (idUnidadAcademica != null && idUnidadAcademica == 1) {
                 centros.add(new CentroComputo(
                         1,
                         Time.valueOf("00:00:00"),
@@ -151,7 +152,7 @@ public class NewMain {
 
         @Override
         public CentroComputo obtenerPorComputadora(Integer idComputadora) throws PersistenciaException {
-            if (idComputadora == 10) {
+            if (idComputadora != null && idComputadora == 10) {
                 return new CentroComputo(
                         1,
                         Time.valueOf("00:00:00"),
