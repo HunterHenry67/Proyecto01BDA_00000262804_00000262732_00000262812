@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class BloqueoDAO implements IBloqueoDAO {
             try {
                 conn.setAutoCommit(false);
                 
-                try (PreparedStatement statement = conn.prepareStatement(comandoSQL)) {
+                try (PreparedStatement statement = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
                     
                     statement.setObject(1, bloqueo.getFechaHoraIncioBloqueo());
                     statement.setObject(2, bloqueo.getFechaHoraFinalBloqueo());
@@ -87,7 +88,9 @@ public class BloqueoDAO implements IBloqueoDAO {
                     statement.setInt(1, idAlumno);
                     
                     int filasAfectadas = statement.executeUpdate();
-                                        
+                    if (filasAfectadas == 0) {
+                        throw new PersistenciaException("No se encontró ningún bloqueopara este alumno.");
+                    }                                       
                     conn.commit();
                 }
                 
