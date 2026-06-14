@@ -80,7 +80,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
                      tipo,
                      idCentroComputo
                      FROM Computadora
-                     WHERE idComputadora = ? AND status = true
+                     WHERE idComputadora = ? AND estatus = true
                      """;
         try (Connection conn = this.conexion.crearConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class ComputadoraDAO implements IComputadoraDAO {
         try(Connection conexion = this.conexion.crearConexion()){
             String comandoSQL = """
                                 UPDATE computadora
-                                    SET estatus = 'APARTADA'
+                                    SET estatus = true
                                     WHERE idComputadora = ?;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
