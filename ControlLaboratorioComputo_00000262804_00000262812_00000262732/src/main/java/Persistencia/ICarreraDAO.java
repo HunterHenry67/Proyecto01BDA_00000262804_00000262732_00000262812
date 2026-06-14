@@ -4,10 +4,12 @@
  */
 package Persistencia;
 
+import Entidades.Carrera;
+
 /**
  *
  * @author Andre
  */
 public interface ICarreraDAO {
-    
+    Carrera consultarCarrera(int idCarrera) throws PersistenciaException;
 }
