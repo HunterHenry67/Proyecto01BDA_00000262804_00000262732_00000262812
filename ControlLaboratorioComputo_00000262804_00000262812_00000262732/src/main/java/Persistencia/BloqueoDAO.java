@@ -28,7 +28,45 @@ public class BloqueoDAO implements IBloqueoDAO {
 
     @Override
     public Bloqueo registrarBloqueo(Bloqueo bloqueo) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String comandoSQL = """
+                            INSERT INTO bloqueo (fechaHoraInicioBloqueo, fechaHoraFinBloqueo, motivo, idAlumno)
+                            VALUES (?, ?, ?, ?)
+                            """;
+        
+        try (Connection conn = this.conexion.crearConexion()) {
+            
+            try {
+                conn.setAutoCommit(false);
+                
+                try (PreparedStatement statement = conn.prepareStatement(comandoSQL)) {
+                    
+                    statement.setObject(1, bloqueo.getFechaHoraIncioBloqueo());
+                    statement.setObject(2, bloqueo.getFechaHoraFinalBloqueo());
+                    statement.setString(3, bloqueo.getMotivo());
+                    statement.setInt(4, bloqueo.getIdAlumno());
+                    
+                    int filasAfectadas = statement.executeUpdate();
+                    
+                    if (filasAfectadas == 0) {
+                        throw new SQLException("La inserción falló");
+                    }               
+                    try (ResultSet llavesGeneradas = statement.getGeneratedKeys()) {
+                        if (llavesGeneradas.next()) {
+                            bloqueo.setIdBloqueo(llavesGeneradas.getInt(1));
+                        }
+                    }
+                    conn.commit();
+                    return bloqueo;
+                }
+                
+            } catch (SQLException ex) {
+                conn.rollback();
+                throw new PersistenciaException("Error al registrar bloqueo en bloqueoDAO " + ex.getMessage());
+            }
+            
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error en la conexion, no se pudo registrar el bloqueo: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -75,7 +113,39 @@ public class BloqueoDAO implements IBloqueoDAO {
 
     @Override
     public List<Bloqueo> consultarBloqueosActivos() throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Bloqueo> listaBloqueos = new ArrayList<>();
+        String comandoSQL = """
+                            SELECT 
+                                idBloqueo,
+                                fechaHoraInicioBloqueo,
+                                fechaHoraFinBloqueo,
+                                motivo,
+                                idAlumno
+                            FROM bloqueo
+                            WHERE fechaHoraFinBloqueo > NOW() OR fechaHoraFinBloqueo IS NULL
+                            """;
+            
+            try (Connection conn = this.conexion.crearConexion();
+               PreparedStatement statement = conn.prepareStatement(comandoSQL);
+               ResultSet resultado = statement.executeQuery()) {
+            
+                while (resultado.next()) {
+                    Bloqueo bloqueo = new Bloqueo();
+
+                    bloqueo.setIdBloqueo(resultado.getInt("idBloqueo"));
+                    bloqueo.setFechaHoraIncioBloqueo(resultado.getObject("fechaHoraInicioBloqueo", java.time.LocalDateTime.class));
+                    bloqueo.setFechaHoraFinalBloqueo(resultado.getObject("fechaHoraFinBloqueo", java.time.LocalDateTime.class));
+                    bloqueo.setMotivo(resultado.getString("motivo"));
+                    bloqueo.setIdAlumno(resultado.getInt("idAlumno"));
+
+                    listaBloqueos.add(bloqueo);
+                }
+
+            } catch (SQLException ex) {
+                throw new PersistenciaException("Error al buscar los bloqueos activos: " + ex.getMessage());
+            }
+        
+        return listaBloqueos;
     }
 
 }
