@@ -8,17 +8,11 @@ import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
 import Persistencia.IComputadoraDAO;
 import Persistencia.PersistenciaException;
-import java.util.logging.Logger;
+import java.util.List;
 
-/**
- *
- * @author user
- */
 public class ComputadoraBO implements IComputadoraBO {
 
-    private static final Logger LOGGER = Logger.getLogger(ComputadoraBO.class.getName());
-
-    private IComputadoraDAO computadoraDAO;
+    private final IComputadoraDAO computadoraDAO;
 
     public ComputadoraBO(IComputadoraDAO computadoraDAO) {
         this.computadoraDAO = computadoraDAO;
@@ -27,76 +21,110 @@ public class ComputadoraBO implements IComputadoraBO {
     @Override
     public Computadora obtenerPCPorIP(String ip) throws NegocioException {
         try {
-            validarIP(ip);
-
-            Computadora computadora = computadoraDAO.obtenerPCPorIP(ip.trim());
-            if (computadora == null) {
-                throw new NegocioException("No se encontro una computadora con esa IP.");
+            if (ip == null || ip.isBlank()) {
+                throw new NegocioException("La IP no puede estar vacía.");
             }
 
-            return computadora;
+            return computadoraDAO.obtenerPCPorIP(ip);
+
         } catch (PersistenciaException ex) {
-            LOGGER.severe(ex.getMessage());
-            throw new NegocioException("Error al obtener computadora por IP: " + ex.getMessage());
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     public Computadora validarEstatusPC(String ip) throws NegocioException {
         Computadora computadora = obtenerPCPorIP(ip);
-        if (!computadora.isEstatus()) {
-            throw new NegocioException("La computadora no esta disponible.");
+
+        if (computadora == null) {
+            throw new NegocioException("No se encontró una computadora con esa IP.");
         }
+
+        if (!computadora.isEstatus()) {
+            throw new NegocioException("La computadora no está disponible.");
+        }
+
         return computadora;
     }
 
     @Override
     public Computadora validarComputadoraDisponible(Integer idComputadora) throws NegocioException {
         try {
-            validarIdComputadora(idComputadora);
-
-            Computadora computadora = computadoraDAO.mostrarComputadoraApartada(idComputadora);
-            if (computadora == null) {
-                throw new NegocioException("No se encontro la computadora.");
+            if (idComputadora == null || idComputadora <= 0) {
+                throw new NegocioException("La computadora no es válida.");
             }
 
-            if (!computadora.isEstatus()) {
-                throw new NegocioException("La computadora no esta disponible para apartado.");
+            Computadora computadora = computadoraDAO.mostrarComputadoraApartada(idComputadora);
+
+            if (computadora == null) {
+                throw new NegocioException("La computadora no está disponible.");
             }
 
             return computadora;
+
         } catch (PersistenciaException ex) {
-            LOGGER.severe(ex.getMessage());
-            throw new NegocioException("Error al validar computadora disponible: " + ex.getMessage());
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     public ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws NegocioException {
         try {
-            validarIdComputadora(idComputadora);
-
-            ComputadoraDTO computadora = computadoraDAO.obtenerCatalogoSoftwarePC(idComputadora);
-            if (computadora == null) {
-                throw new NegocioException("No se encontro catalogo de software para la computadora.");
+            if (idComputadora == null || idComputadora <= 0) {
+                throw new NegocioException("La computadora no es válida.");
             }
 
-            return computadora;
+            return computadoraDAO.obtenerCatalogoSoftwarePC(idComputadora);
+
         } catch (PersistenciaException ex) {
-            LOGGER.severe(ex.getMessage());
-            throw new NegocioException("Error al obtener catalogo de software: " + ex.getMessage());
+            throw new NegocioException(ex.getMessage());
         }
     }
 
-    private void validarIP(String ip) throws NegocioException {
-        if (ip == null || ip.isBlank()) {
-            throw new NegocioException("La IP no puede estar vacia.");
+    @Override
+    public Computadora obtenerComputadoraPorNumero(int numeroMaquina) throws NegocioException {
+        try {
+            if (numeroMaquina <= 0) {
+                throw new NegocioException("El número de máquina no es válido.");
+            }
+
+            return computadoraDAO.obtenerComputadoraPorNumero(numeroMaquina);
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
         }
     }
 
-    private void validarIdComputadora(Integer idComputadora) throws NegocioException {
-        if (idComputadora == null || idComputadora <= 0) {
-            throw new NegocioException("El ID de la computadora no es valido.");
+    @Override
+    public void actualizarEstatus(int idComputadora, boolean estatus) throws NegocioException {
+        try {
+            if (idComputadora <= 0) {
+                throw new NegocioException("La computadora no es válida.");
+            }
+
+            computadoraDAO.actualizarEstatus(idComputadora, estatus);
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<Computadora> obtenerMonitoreoEquipos(String busqueda, String filtro) throws NegocioException {
+        try {
+            return computadoraDAO.obtenerMonitoreoEquipos(busqueda, filtro);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public int contarMonitoreoEquipos(String busqueda, String filtro) throws NegocioException {
+        try {
+            return computadoraDAO.contarMonitoreoEquipos(busqueda, filtro);
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
         }
     }
 }
