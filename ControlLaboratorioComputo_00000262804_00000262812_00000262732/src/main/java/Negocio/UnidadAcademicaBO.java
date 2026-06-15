@@ -24,12 +24,10 @@ public class UnidadAcademicaBO implements IUnidadAcademicaBO {
     public UnidadAcademica consultarUnidadAcademicaPorID(Integer idUnidadAcademica) throws NegocioException {
         try {
             validarIdUnidadAcademica(idUnidadAcademica);
-
             UnidadAcademica unidad = unidadAcademicaDAO.consultarUnidadAcademicaPorID(idUnidadAcademica);
             if (unidad == null) {
                 throw new NegocioException("No se encontro la unidad academica.");
             }
-
             return unidad;
         } catch (PersistenciaException ex) {
             LOGGER.severe(ex.getMessage());

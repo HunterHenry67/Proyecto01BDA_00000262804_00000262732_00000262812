@@ -27,6 +27,7 @@ import java.time.LocalTime;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 
 /**
@@ -34,21 +35,22 @@ import javax.swing.border.LineBorder;
  * @author BALAMRUSH
  */
 public class frmSeleccionEquipo extends javax.swing.JFrame {
-
     private Alumno alumno;
     private IComputadoraBO computadoraBO;
     private IReservaBO reservaBO;
     private ICarreraBO carreraBO;
     private Carrera carrera;
-
+    private Timer timerActualizacion;
+    
     public frmSeleccionEquipo() {
         initComponents();
         this.prepararPantalla();
         this.inicializarNegocio();
         this.configurarPanelComputadoras();
         this.cargarComputadoras();
+        this.iniciarActualizacionAutomatica();
     }
-
+    
     public frmSeleccionEquipo(Alumno alumno) {
         initComponents();
         this.alumno = alumno;
@@ -57,6 +59,8 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         this.configurarPanelComputadoras();
         this.cargarComputadoras();
         this.cargarDatosAlumno();
+        this.cargarTiempoUsoAlumno();
+        this.iniciarActualizacionAutomatica();
     }
 
     private void prepararPantalla() {
@@ -73,7 +77,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
     }
 
     private void configurarPanelComputadoras() {
-        pnlComputadoras.setLayout(new GridLayout(3, 3, 100, 70));
+        pnlComputadoras.setLayout(new GridLayout(0, 3, 100, 70));
         pnlComputadoras.setBackground(new Color(220, 220, 220));
     }
 
@@ -147,6 +151,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No hay alumno iniciado. Regresa al inicio de sesión.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        this.detenerActualizacionAutomatica();
         frmInformacionEquipo pantallaInformacion = new frmInformacionEquipo(this.alumno, idComputadora, apartada);
         pantallaInformacion.setVisible(true);
         this.dispose();
@@ -168,7 +173,6 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             this.lblCarrera.setText(this.carrera.getNombre());
             this.lblTiempoMaximo.setText(this.formatearTiempoDiario(this.carrera.getTiempoDiario()));
             this.lblIconoReloj.setText("⏱");
-            this.lblTiempoActual.setText("00:00:00");
 
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al cargar datos del alumno", JOptionPane.ERROR_MESSAGE);
@@ -180,6 +184,45 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             return "00:00:00";
         }
         return tiempoDiario.toString();
+    }
+
+    private void iniciarActualizacionAutomatica() {
+        if (this.timerActualizacion != null && this.timerActualizacion.isRunning()) {
+            this.timerActualizacion.stop();
+        }
+        this.timerActualizacion = new javax.swing.Timer(30000, e -> {
+            this.cargarComputadoras();
+            if (this.alumno != null) {
+                this.cargarTiempoUsoAlumno();
+            }
+        });
+        this.timerActualizacion.start();
+    }
+
+    private void detenerActualizacionAutomatica() {
+        if (this.timerActualizacion != null && this.timerActualizacion.isRunning()) {
+            this.timerActualizacion.stop();
+        }
+    }
+
+    private void cargarTiempoUsoAlumno() {
+        try {
+            Integer minutosUsados = this.reservaBO.consultarMinutosUsadosPorAlumno(
+                    this.alumno.getIdAlumno()
+            );
+            this.lblTiempoActual.setText(this.formatearMinutos(minutosUsados));
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al cargar tiempo usado", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String formatearMinutos(Integer minutosTotales) {
+        if (minutosTotales == null) {
+            return "00:00:00";
+        }
+        int horas = minutosTotales / 60;
+        int minutos = minutosTotales % 60;
+        return String.format("%02d:%02d:00", horas, minutos);
     }
 
     @SuppressWarnings("unchecked")
@@ -256,7 +299,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
                             .addComponent(lblTiempoActual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(234, 234, 234)
                         .addComponent(txtSubtitulo)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(488, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,7 +308,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(28, 28, 28)
                         .addComponent(txtSubtitulo))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombreAlumno)
@@ -281,7 +324,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
                     .addComponent(lblTiempoActual))
                 .addGap(13, 13, 13)
                 .addComponent(pnlComputadoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addContainerGap(323, Short.MAX_VALUE))
         );
 
         pack();

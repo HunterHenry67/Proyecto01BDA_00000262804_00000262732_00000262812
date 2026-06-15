@@ -18,7 +18,6 @@ import java.util.logging.Logger;
  *
  * @author BALAMRUSH
  */
-
 public class ReservaBO implements IReservaBO {
 
     private static final Logger LOGGER = Logger.getLogger(ReservaBO.class.getName());
@@ -184,14 +183,28 @@ public class ReservaBO implements IReservaBO {
 
     @Override
     public Reserva consultarReservaActivaPorComputadora(Integer idComputadora) throws NegocioException {
-        try{
-            if(idComputadora == null || idComputadora <= 0){
+        try {
+            if (idComputadora == null || idComputadora <= 0) {
                 throw new NegocioException("El ID de la computadora no es válido.");
             }
             return this.reservaDAO.consultarReservaActivaPorComputadora(idComputadora);
-        }catch(PersistenciaException ex){
+        } catch (PersistenciaException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new NegocioException(ex.getMessage());        
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Integer consultarMinutosUsadosPorAlumno(Integer idAlumno) throws NegocioException {
+        try {
+            if (idAlumno == null || idAlumno <= 0) {
+                throw new NegocioException("El ID del alumno no es válido.");
+            }
+            return this.reservaDAO.consultarMinutosUsadosPorAlumno(idAlumno);
+        } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException("Error al consultar minutos usados por alumno: " + ex.getMessage()
+            );
         }
     }
 }

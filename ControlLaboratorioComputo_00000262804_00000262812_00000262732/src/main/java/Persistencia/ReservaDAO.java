@@ -36,10 +36,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param reserva
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public int registrarReserva(GuardarReservaDTO reserva) throws PersistenciaException {
@@ -81,10 +81,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param idAlumno
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva consultarResrevaActivaPorAlumno(int idAlumno) throws PersistenciaException {
@@ -126,10 +126,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param idComputadora
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva consultarReservaActivaPorComputadora(int idComputadora) throws PersistenciaException {
@@ -171,10 +171,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param filtro
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public List<Reserva> consultar(String filtro) throws PersistenciaException {
@@ -235,12 +235,10 @@ public class ReservaDAO implements IReservaDAO {
             throw new PersistenciaException("Error al consultar las reservas por filtro: " + ex.getMessage());
         }
     }
-    
 
     /**
-     * 
-     * @return
-     * @throws PersistenciaException 
+     *
+     * @return @throws PersistenciaException
      */
     @Override
     public List<Reserva> consultarReservasActivas() throws PersistenciaException {
@@ -281,9 +279,9 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param reserva
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public void finalizarReserva(FinalizarReservaDTO reserva) throws PersistenciaException {
@@ -317,9 +315,9 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param idReserva
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public void cancelarReserva(int idReserva) throws PersistenciaException {
@@ -344,10 +342,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param idReserva
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva consultarReservaPorID(int idReserva) throws PersistenciaException {
@@ -387,39 +385,36 @@ public class ReservaDAO implements IReservaDAO {
         }
     }
 
-    /**
-     * 
-     * @param idAlumno
-     * @return
-     * @throws PersistenciaException 
-     */
+    
     @Override
     public int consultarMinutosUsadosPorAlumno(int idAlumno) throws PersistenciaException {
-        String comandoSQL = """
+        String sentenciaSQL = """
                             SELECT COALESCE(SUM(tiempoUso), 0) AS minutosUsados
-                                    FROM reserva
-                                    WHERE idAlumno = ?
-                                      AND DATE(fechaHoraApartado) = CURDATE()
-                                      AND fechaHoraFinal IS NOT NULL;
+                                FROM reserva
+                                WHERE idAlumno = ?
+                                AND tiempoUso IS NOT NULL;
                         """;
-        try (Connection conexionBD = this.conexion.crearConexion(); PreparedStatement comando = conexionBD.prepareStatement(comandoSQL)) {
+        try (Connection conexionBD = this.conexion.crearConexion(); PreparedStatement comando = conexionBD.prepareStatement(sentenciaSQL)) {
             comando.setInt(1, idAlumno);
-            ResultSet resultado = comando.executeQuery();
-            if (resultado.next()) {
-                return resultado.getInt("minutosUsados");
+            try (ResultSet resultado = comando.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt("minutosUsados");
+                }
             }
             return 0;
         } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar minutos usados por alumno: " + ex.getMessage());
+            throw new PersistenciaException(
+                    "Error al consultar minutos usados por alumno: " + ex.getMessage()
+            );
         }
     }
 
     /**
-     * 
+     *
      * @param reserva
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva guardar(GuardarReservaDTO reserva) throws PersistenciaException {
@@ -461,10 +456,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param reserva
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva cancelar(CancelarReservaDTO reserva) throws PersistenciaException {
@@ -507,10 +502,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param reserva
      * @return
-     * @throws PersistenciaException 
+     * @throws PersistenciaException
      */
     @Override
     public Reserva finalizar(FinalizarReservaDTO reserva) throws PersistenciaException {
@@ -551,11 +546,11 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     * 
+     *
      * @param fechaInicio
      * @param fechaApartado
      * @param fechaFinal
-     * @return 
+     * @return
      */
     private int calcularTiempoUso(LocalDateTime fechaInicio, LocalDateTime fechaApartado, LocalDateTime fechaFinal) {
         LocalDateTime inicioReal = fechaInicio != null ? fechaInicio : fechaApartado;

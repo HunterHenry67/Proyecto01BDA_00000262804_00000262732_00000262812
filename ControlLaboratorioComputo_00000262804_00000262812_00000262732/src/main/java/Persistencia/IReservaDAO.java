@@ -39,4 +39,6 @@ public interface IReservaDAO {
     Reserva consultarReservaPorID(int idReserva) throws PersistenciaException;
 
     int consultarMinutosUsadosPorAlumno(int idAlumno)throws PersistenciaException;
+    
+    
 }

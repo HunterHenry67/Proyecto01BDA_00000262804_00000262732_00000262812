@@ -13,9 +13,6 @@ import Persistencia.IConexionBD;
 import Persistencia.PersistenciaException;
 import Persistencia.ReservaDAO;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -27,7 +24,6 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmPantallaWindows.class.getName());
     private IReservaBO reservaNegocio;
     private Integer idReservaActual;
-    
     private javax.swing.Timer timerUso; 
     private int segundosTranscurridos = 0;
     
@@ -80,10 +76,6 @@ public class frmPantallaWindows extends javax.swing.JFrame {
         });
         timerUso.start();
     }
-
-    
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -378,9 +370,7 @@ public class frmPantallaWindows extends javax.swing.JFrame {
                 this.dispose(); 
                 
             } catch (NegocioException ex) { 
-                JOptionPane.showMessageDialog(this, "Error al cerrar sesión: " + ex.getMessage(), "Error de Conexión", JOptionPane.ERROR_MESSAGE);
-                    
-                // Si falla, volvemos a arrancar el cronómetro
+                JOptionPane.showMessageDialog(this, "Error al cerrar sesión: " + ex.getMessage(), "Error de Conexión", JOptionPane.ERROR_MESSAGE);                                  
                 if (timerUso != null) timerUso.start();
             } catch (PersistenciaException ex) {
                 System.getLogger(frmPantallaWindows.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
