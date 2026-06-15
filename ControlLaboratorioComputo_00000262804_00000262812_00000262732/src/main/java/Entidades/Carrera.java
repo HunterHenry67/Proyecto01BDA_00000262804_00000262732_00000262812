@@ -4,6 +4,8 @@
  */
 package Entidades;
 
+import java.time.LocalTime;
+
 /**
  *
  * @author Home
@@ -11,12 +13,12 @@ package Entidades;
 public class Carrera {
     private Integer idCarrera;
     private String nombre;
-    private Integer tiempoDiario;
+    private LocalTime tiempoDiario;
 
     public Carrera() {
     }
 
-    public Carrera(Integer idCarrera, String nombre, Integer tiempoDiario) {
+    public Carrera(Integer idCarrera, String nombre, LocalTime tiempoDiario) {
         this.idCarrera = idCarrera;
         this.nombre = nombre;
         this.tiempoDiario = tiempoDiario;
@@ -38,11 +40,11 @@ public class Carrera {
         this.nombre = nombre;
     }
 
-    public Integer getTiempoDiario() {
+    public LocalTime getTiempoDiario() {
         return tiempoDiario;
     }
 
-    public void setTiempoDiario(Integer tiempoDiario) {
+    public void setTiempoDiario(LocalTime tiempoDiario) {
         this.tiempoDiario = tiempoDiario;
     }
     

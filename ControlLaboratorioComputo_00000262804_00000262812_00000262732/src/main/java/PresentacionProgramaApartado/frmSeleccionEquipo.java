@@ -48,6 +48,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         this.inicializarNegocio();
         this.configurarPanelComputadoras();
         this.cargarComputadoras();
+        this.cargarDatosAlumno();
     }
 
     private void prepararPantalla() {
@@ -67,10 +68,9 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         pnlComputadoras.setBackground(new Color(220, 220, 220));
     }
 
-
     private void cargarComputadoras() {
         pnlComputadoras.removeAll();
-        for (int idComputadora = 1; idComputadora <= 9; idComputadora++) {         
+        for (int idComputadora = 1; idComputadora <= 9; idComputadora++) {
             boolean bloqueada = this.computadoraBloqueada(idComputadora);
             boolean apartada = this.computadoraApartada(idComputadora);
             this.agregarComputadora(idComputadora, apartada, bloqueada);
@@ -78,7 +78,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         pnlComputadoras.revalidate();
         pnlComputadoras.repaint();
     }
-    
+
     private boolean computadoraBloqueada(Integer idComputadora) {
         try {
             this.computadoraBO.validarComputadoraDisponible(idComputadora);
@@ -93,13 +93,13 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             List reservasActivas = this.reservaBO.consultarReservasActivas();
             for (Object objeto : reservasActivas) {
                 Reserva reserva = (Reserva) objeto;
-                if (reserva.getIdComputadora() != null&& reserva.getIdComputadora().equals(idComputadora)) {
+                if (reserva.getIdComputadora() != null && reserva.getIdComputadora().equals(idComputadora)) {
                     return true;
                 }
             }
             return false;
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog( this,ex.getMessage(), "Error al consultar reservas activas",JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al consultar reservas activas", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -128,7 +128,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         }
         btnComputadora.addActionListener(e -> {
             if (bloqueada) {
-                JOptionPane.showMessageDialog(this,"La computadora " + numeroTexto + " está bloqueada o deshabilitada.", "Computadora no disponible",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "La computadora " + numeroTexto + " está bloqueada o deshabilitada.", "Computadora no disponible", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             this.abrirInformacionEquipo(idComputadora, apartada);
@@ -136,25 +136,45 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
 
         this.pnlComputadoras.add(btnComputadora);
     }
-    
+
     private void abrirInformacionEquipo(Integer idComputadora, boolean apartada) {
         if (this.alumno == null) {
-            JOptionPane.showMessageDialog(this,"No hay alumno iniciado. Regresa al inicio de sesión.","Error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No hay alumno iniciado. Regresa al inicio de sesión.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        frmInformacionEquipo pantallaInformacion = new frmInformacionEquipo(this.alumno, idComputadora, apartada);              
+        frmInformacionEquipo pantallaInformacion = new frmInformacionEquipo(this.alumno, idComputadora, apartada);
         pantallaInformacion.setVisible(true);
         this.dispose();
     }
 
-        
-        @SuppressWarnings("unchecked")
+    private void cargarDatosAlumno() {
+        if (this.alumno == null) {
+            return;
+        }
+        String nombreCompleto = this.alumno.getNombres()
+                + " "
+                + this.alumno.getApellidoPaterno()
+                + " "
+                + this.alumno.getApellidoMaterno();
+        this.lblNombreAlumno.setText(nombreCompleto);
+        this.lblIdAlumno.setText(String.format("%010d", this.alumno.getIdAlumno()));
+        this.lblCarrera.setText("ISW");
+        this.lblTiempoMaximo.setText("4:00:00");     
+        this.lblIconoReloj.setText("⏱");
+    }
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         txtTitulo = new javax.swing.JLabel();
         txtSubtitulo = new javax.swing.JLabel();
         pnlComputadoras = new javax.swing.JPanel();
+        lblNombreAlumno = new javax.swing.JLabel();
+        lblIdAlumno = new javax.swing.JLabel();
+        lblCarrera = new javax.swing.JLabel();
+        lblIconoReloj = new javax.swing.JLabel();
+        lblTiempoMaximo = new javax.swing.JLabel();
+        lblTiempoActual = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -176,6 +196,18 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             .addGap(0, 262, Short.MAX_VALUE)
         );
 
+        lblNombreAlumno.setText("jLabel1");
+
+        lblIdAlumno.setText("jLabel2");
+
+        lblCarrera.setText("jLabel3");
+
+        lblIconoReloj.setText("jLabel4");
+
+        lblTiempoMaximo.setText("jLabel5");
+
+        lblTiempoActual.setText("jLabel6");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -183,36 +215,67 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(44, 44, 44)
                 .addComponent(pnlComputadoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 549, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(475, 475, 475)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                            .addComponent(lblIdAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(272, 272, 272)
                         .addComponent(txtTitulo))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(462, 462, 462)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCarrera)
+                            .addComponent(lblIconoReloj))
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblTiempoMaximo, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                            .addComponent(lblTiempoActual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(234, 234, 234)
                         .addComponent(txtSubtitulo)))
-                .addContainerGap(488, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtSubtitulo)
-                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtSubtitulo))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNombreAlumno)
+                        .addGap(8, 8, 8)
+                        .addComponent(lblIdAlumno)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblCarrera)
+                            .addComponent(lblTiempoMaximo))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblIconoReloj)
+                    .addComponent(lblTiempoActual))
+                .addGap(13, 13, 13)
                 .addComponent(pnlComputadoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(343, Short.MAX_VALUE))
+                .addContainerGap(333, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-         * @param args the command line arguments
-         */
+     * @param args the command line arguments
+     */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblCarrera;
+    private javax.swing.JLabel lblIconoReloj;
+    private javax.swing.JLabel lblIdAlumno;
+    private javax.swing.JLabel lblNombreAlumno;
+    private javax.swing.JLabel lblTiempoActual;
+    private javax.swing.JLabel lblTiempoMaximo;
     private javax.swing.JPanel pnlComputadoras;
     private javax.swing.JLabel txtSubtitulo;
     private javax.swing.JLabel txtTitulo;

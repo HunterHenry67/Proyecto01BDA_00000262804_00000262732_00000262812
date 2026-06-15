@@ -40,7 +40,7 @@ public class CarreraDAO implements ICarreraDAO{
                         Carrera carrera = new Carrera();
                         carrera.setIdCarrera(resultado.getInt("idCarrera"));
                         carrera.setNombre(resultado.getString("nombre"));
-                        carrera.setTiempoDiario(resultado.getInt("tiempoDiario"));
+                        carrera.setTiempoDiario(resultado.getTime("tiempoDiario").toLocalTime());
                         return carrera;
                     }
                 }

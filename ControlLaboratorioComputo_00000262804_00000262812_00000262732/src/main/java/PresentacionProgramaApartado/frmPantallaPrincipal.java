@@ -162,7 +162,7 @@ public class frmPantallaPrincipal extends javax.swing.JFrame {
             String contrasena = this.obtenerContrasena();
             Alumno alumno = this.alumnoBO.validarCredenciales(idAlumno, contrasena);
             JOptionPane.showMessageDialog(this, "Bienvenido " + alumno.getNombres() + " " + alumno.getApellidoPaterno(), "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
-            frmSeleccionEquipo pantallaSeleccionEquipo = new frmSeleccionEquipo();
+            frmSeleccionEquipo pantallaSeleccionEquipo = new frmSeleccionEquipo(alumno);
             pantallaSeleccionEquipo.setVisible(true);
             this.dispose();
         } catch (NumberFormatException ex) {

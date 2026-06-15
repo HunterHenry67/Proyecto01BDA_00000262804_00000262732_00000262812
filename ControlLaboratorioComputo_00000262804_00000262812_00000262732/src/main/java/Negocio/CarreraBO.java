@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Negocio;
+
 /**
  *
  * @author Andre
@@ -32,8 +33,12 @@ public class CarreraBO implements ICarreraBO {
                 throw new NegocioException("No se encontro la carrera.");
             }
 
-            if (carrera.getTiempoDiario() == null || carrera.getTiempoDiario() <= 0) {
-                throw new NegocioException("La carrera no tiene tiempo diario valido configurado.");
+            if (carrera.getTiempoDiario() == null) {
+                throw new NegocioException("La carrera no tiene tiempo diario configurado.");
+            }
+
+            if (carrera.getTiempoDiario().equals(java.time.LocalTime.MIDNIGHT)) {
+                throw new NegocioException("La carrera no tiene tiempo diario válido configurado.");
             }
 
             return carrera;
@@ -49,4 +54,3 @@ public class CarreraBO implements ICarreraBO {
         }
     }
 }
-
