@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
-        <exec.mainClass>enriquemadridalvarez.NewMain</exec.mainClass>
+        <exec.mainClass>PresentacionProgramaAdministrador.frmMenuGestion</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
