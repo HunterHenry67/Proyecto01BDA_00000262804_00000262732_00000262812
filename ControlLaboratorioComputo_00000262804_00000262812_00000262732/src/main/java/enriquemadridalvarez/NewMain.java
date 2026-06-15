@@ -19,6 +19,7 @@ import Entidades.UnidadAcademica;
 import Persistencia.*;
 import PresentacionProgramaApartado.frmPantallaPrincipal;
 import PresentacionProgramaApartado.frmSeleccionEquipo;
+import PresentacionProgramaBloqueo.frmPantallaBloqueo;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class NewMain {
     static final String CONTRASENA_MAESTRA  = "admin123";
     static final String CONTRASENA_ALUMNO   = "pass123";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws PersistenciaException {
 //        IConexionBD conexion = new ConexionBD();
 //
 //        probarAlumnoDAO(conexion);
@@ -445,10 +446,10 @@ public class NewMain {
         }
     }
     
-    static void probarFarme(){
-        frmPantallaPrincipal prueba = new frmPantallaPrincipal();
-        prueba.setVisible(true);
-    }
+//    static void probarFarme(){
+//        frmPantallaPrincipal prueba = new frmPantallaPrincipal();
+//        prueba.setVisible(true);
+//    }
     
     
 }
