@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class ConexionBD implements IConexionBD{
     
     private final String SERVER = "127.0.0.1";
-    private final String BASEDATOS = "proyectoCISCO";
+    private final String BASEDATOS = "proyectocisco";
     private final String URL = "jdbc:mysql://" + SERVER + "/" + BASEDATOS;
     private final String USER = "root";
     private final String PASSWORD = "1234";
