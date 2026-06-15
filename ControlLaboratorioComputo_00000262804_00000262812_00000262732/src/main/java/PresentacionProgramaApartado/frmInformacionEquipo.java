@@ -5,7 +5,6 @@
 package PresentacionProgramaApartado;
 
 import Dtos.ComputadoraDTO;
-import Dtos.FinalizarReservaDTO;
 import Dtos.GuardarReservaDTO;
 import Entidades.Alumno;
 import Entidades.Carrera;
@@ -63,10 +62,6 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
     private Carrera carrera;
     private CentroComputo centroComputo;
     private UnidadAcademica unidadAcademica;
-    private Timer timerUso;
-    private int segundosTranscurridos = 0;
-    private int segundosMaximos = 0;
-    private Reserva reservaActual;
 
     public frmInformacionEquipo(Alumno alumno, Integer idComputadora, boolean apartada) {
         initComponents();
@@ -100,21 +95,25 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
                     + this.alumno.getApellidoPaterno()
                     + " "
                     + this.alumno.getApellidoMaterno();
+
             this.lblNombreAlumno.setText(nombreCompleto);
             this.lblIdAlumno.setText(String.format("%010d", this.alumno.getIdAlumno()));
             this.carrera = this.carreraBO.consultarCarrera(this.alumno.getIdCarrera());
             this.lblCarrera.setText(this.carrera.getNombre());
             if (this.carrera.getTiempoDiario() != null) {
                 this.lblTiempoMaximo.setText(this.carrera.getTiempoDiario().toString());
-                this.segundosMaximos = this.carrera.getTiempoDiario().toSecondOfDay();
             } else {
                 this.lblTiempoMaximo.setText("00:00:00");
-                this.segundosMaximos = 0;
             }
             this.lblIconoReloj.setText("⏱");
             this.lblTiempoActual.setText("00:00:00");
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al cargar datos del alumno",JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Error al cargar datos del alumno",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -147,45 +146,6 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE
             );
         }
-    }
-
-
-    private void configurarBotonSeleccionar() {
-        if (this.apartada) {
-            this.btnSeleccionar.setEnabled(false);
-            this.btnSeleccionar.setToolTipText("Esta computadora ya está apartada.");
-        } else {
-            this.btnSeleccionar.setEnabled(true);
-            this.btnSeleccionar.setToolTipText("Seleccionar esta computadora.");
-        }
-    }
-
-    private void iniciarCronometroUso() {
-        if (this.timerUso != null) {
-            this.timerUso.stop();
-        }
-        this.segundosTranscurridos = 0;
-        this.lblTiempoActual.setText("00:00:00");
-        this.timerUso = new javax.swing.Timer(1000, e -> {
-            this.segundosTranscurridos++;
-            this.lblTiempoActual.setText(
-                    this.formatearSegundos(this.segundosTranscurridos)
-            );
-
-            if (this.segundosTranscurridos >= this.segundosMaximos) {
-                this.timerUso.stop();
-                this.finalizarReservaPorTiempo();
-            }
-        });
-        this.timerUso.start();
-    }
-
-    private String formatearSegundos(int segundosTotales) {
-        int horas = segundosTotales / 3600;
-        int minutos = (segundosTotales % 3600) / 60;
-        int segundos = segundosTotales % 60;
-
-        return String.format("%02d:%02d:%02d", horas, minutos, segundos);
     }
 
     private void mostrarSoftwareDisponible() {
@@ -231,7 +191,6 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
     private void seleccionarComputadora() {
         try {
             if (this.apartada) {
-                JOptionPane.showMessageDialog(this, "Esta computadora ya está apartada.", "No disponible", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int opcion = JOptionPane.showConfirmDialog(this, "¿Deseas seleccionar la computadora " + String.format("%02d", this.computadora.getNumeroMaquina()) + "?", "Confirmar selección", JOptionPane.YES_NO_OPTION);
@@ -239,40 +198,31 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
                 return;
             }
             GuardarReservaDTO reservaDTO = new GuardarReservaDTO(LocalDateTime.now(), null, null, null, this.alumno.getIdAlumno(), this.idComputadora);
+
             Reserva reservaGuardada = this.reservaBO.guardar(reservaDTO);
-            this.reservaActual = reservaGuardada;
-            this.apartada = true;
+
+            JOptionPane.showMessageDialog(this, "Selección exitosa.\nLa computadora ha sido seleccionada correctamente.\nID reserva: " + reservaGuardada.getIdReserva(), "Selección exitosa", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Selección exitosa.\nLa computadora ha sido seleccionada correctamente.\nID reserva: "
-                    + reservaGuardada.getIdReserva(),
-                    "Selección exitosa",
-                    JOptionPane.INFORMATION_MESSAGE
+                    ex.getMessage(),
+                    "Error al seleccionar computadora",
+                    JOptionPane.ERROR_MESSAGE
             );
-            this.txtSubtitulo.setText("Información Equipo (En uso)");
-            this.jLabel6.setText("Estado: En uso");
-            this.btnSeleccionar.setEnabled(false);
-            this.iniciarCronometroUso();
-        } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al seleccionar computadora", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    private void finalizarReservaPorTiempo() {
-        try {
-            if (this.reservaActual == null) {
-                return;
-            }
-            FinalizarReservaDTO finalizarDTO = new FinalizarReservaDTO(this.reservaActual.getIdReserva(), LocalDateTime.now());
-            this.reservaBO.finalizar(finalizarDTO);
-            JOptionPane.showMessageDialog(this, "El tiempo de uso terminó.\nLa computadora ahora está disponible.", "Tiempo finalizado", JOptionPane.INFORMATION_MESSAGE);
-            frmSeleccionEquipo seleccion = new frmSeleccionEquipo(this.alumno);
-            seleccion.setVisible(true);
-            this.dispose();
-        } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al finalizar reserva", JOptionPane.ERROR_MESSAGE);
-        }
+    
+    
+    private void configurarBotonSeleccionar() {
+    if (this.apartada) {
+        this.btnSeleccionar.setEnabled(false);
+        this.btnSeleccionar.setToolTipText("Esta computadora ya está apartada.");
+    } else {
+        this.btnSeleccionar.setEnabled(true);
+        this.btnSeleccionar.setToolTipText("Seleccionar esta computadora.");
     }
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -400,11 +350,11 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
                                     .addComponent(lblTiempoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(223, 223, 223)
-                                .addComponent(txtTitulo))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGap(209, 209, 209)
-                                .addComponent(txtSubtitulo)))))
+                                .addComponent(txtSubtitulo))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(223, 223, 223)
+                                .addComponent(txtTitulo)))))
                 .addContainerGap(439, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(

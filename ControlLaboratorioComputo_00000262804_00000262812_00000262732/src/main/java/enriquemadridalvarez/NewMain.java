@@ -18,8 +18,6 @@ import Entidades.Software;
 import Entidades.UnidadAcademica;
 import Persistencia.*;
 import PresentacionProgramaApartado.frmPantallaPrincipal;
-import PresentacionProgramaApartado.frmSeleccionEquipo;
-import PresentacionProgramaBloqueo.frmPantallaBloqueo;
 import java.time.LocalDateTime;
 import java.util.List;
 
