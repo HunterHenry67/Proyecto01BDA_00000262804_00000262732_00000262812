@@ -36,10 +36,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param reserva
-     * @return
-     * @throws PersistenciaException
+     * Registra una nueva reserva en la base de datos.
+     * @param reserva DTO con los datos necesarios para registrar la reserva.
+     * @return reserva registrada con su identificador generado.
+     * @throws PersistenciaException si ocurre un error al guardar la reserva en la base de datos.
      */
     @Override
     public int registrarReserva(GuardarReservaDTO reserva) throws PersistenciaException {
@@ -81,10 +81,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param idAlumno
-     * @return
-     * @throws PersistenciaException
+     * Consulta la reserva activa de un alumno.
+     * @param idAlumno identificador del alumno.
+     * @return reserva activa del alumno; null si no tiene una reserva activa.
+     * @throws PersistenciaException si ocurre un error al consultar la reserva activa.
      */
     @Override
     public Reserva consultarResrevaActivaPorAlumno(int idAlumno) throws PersistenciaException {
@@ -126,10 +126,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param idComputadora
-     * @return
-     * @throws PersistenciaException
+     * Consulta la reserva activa de una computadora.
+     * @param idComputadora identificador de la computadora.
+     * @return reserva activa de la computadora; null si la computadora no está apartada.
+     * @throws PersistenciaException si ocurre un error al consultar la reserva activa de la computadora.
      */
     @Override
     public Reserva consultarReservaActivaPorComputadora(int idComputadora) throws PersistenciaException {
@@ -171,10 +171,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param filtro
-     * @return
-     * @throws PersistenciaException
+     * Consulta las reservas registradas aplicando un filtro de búsqueda.
+     * @param filtro texto utilizado para buscar coincidencias dentro de las reservas.
+     * @return lista de reservas que coinciden con el filtro indicado.
+     * @throws PersistenciaException si ocurre un error al consultar las reservas.
      */
     @Override
     public List<Reserva> consultar(String filtro) throws PersistenciaException {
@@ -237,8 +237,9 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @return @throws PersistenciaException
+     * Consulta todas las reservas activas.
+     * @return lista de reservas activas registradas en la base de datos.
+     * @throws PersistenciaException si ocurre un error al consultar las reservas activas.
      */
     @Override
     public List<Reserva> consultarReservasActivas() throws PersistenciaException {
@@ -279,9 +280,9 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param reserva
-     * @throws PersistenciaException
+     * Finaliza una reserva activa.
+     * @param reserva DTO con los datos necesarios para finalizar la reserva.
+     * @throws PersistenciaException si ocurre un error al finalizar la reserva.
      */
     @Override
     public void finalizarReserva(FinalizarReservaDTO reserva) throws PersistenciaException {
@@ -315,9 +316,9 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param idReserva
-     * @throws PersistenciaException
+     * Cancela una reserva activa.
+     * @param idReserva identificador de la reserva que se desea cancelar.
+     * @throws PersistenciaException si ocurre un error al cancelar la reserva.
      */
     @Override
     public void cancelarReserva(int idReserva) throws PersistenciaException {
@@ -342,10 +343,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param idReserva
-     * @return
-     * @throws PersistenciaException
+     * Consulta una reserva a partir de su identificador.
+     * @param idReserva identificador de la reserva que se desea consultar.
+     * @return reserva encontrada; null si no existe una reserva con ese ID.
+     * @throws PersistenciaException si ocurre un error al consultar la reserva.
      */
     @Override
     public Reserva consultarReservaPorID(int idReserva) throws PersistenciaException {
@@ -385,7 +386,12 @@ public class ReservaDAO implements IReservaDAO {
         }
     }
 
-    
+    /**
+     * Consulta los minutos usados por un alumno.
+     * @param idAlumno identificador del alumno.
+     * @return cantidad total de minutos usados por el alumno.
+     * @throws PersistenciaException si ocurre un error al consultar el tiempo de uso.
+     */
     @Override
     public int consultarMinutosUsadosPorAlumno(int idAlumno) throws PersistenciaException {
         String sentenciaSQL = """
@@ -411,10 +417,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param reserva
-     * @return
-     * @throws PersistenciaException
+     * Registra una nueva reserva en la base de datos con trabsacción.  
+     * @param reserva DTO con los datos necesarios para registrar la reserva.
+     * @return reserva registrada con su identificador generado.
+     * @throws PersistenciaException si ocurre un error al guardar la reserva en la base de datos.
      */
     @Override
     public Reserva guardar(GuardarReservaDTO reserva) throws PersistenciaException {
@@ -456,10 +462,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param reserva
-     * @return
-     * @throws PersistenciaException
+     * Cancela una reserva activa con transacción.
+     * @param reserva identificador de la reserva que se desea cancelar.
+     * @return reserva cancelada.
+     * @throws PersistenciaException si ocurre un error al cancelar la reserva.
      */
     @Override
     public Reserva cancelar(CancelarReservaDTO reserva) throws PersistenciaException {
@@ -502,10 +508,10 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param reserva
-     * @return
-     * @throws PersistenciaException
+     * Finaliza una reserva activa con transacción.
+     * @param reserva DTO con los datos necesarios para finalizar la reserva.
+     * @return reserva finalizada.
+     * @throws PersistenciaException si ocurre un error al finalizar la reserva.
      */
     @Override
     public Reserva finalizar(FinalizarReservaDTO reserva) throws PersistenciaException {
@@ -546,11 +552,11 @@ public class ReservaDAO implements IReservaDAO {
     }
 
     /**
-     *
-     * @param fechaInicio
-     * @param fechaApartado
+     * Calcula el tiempo de uso de una reserva en minutos.
+     * @param fechaInicio fecha y hora en que se realizó el apartado.
+     * @param fechaApartado fecha y hora en que terminó la reserva.
      * @param fechaFinal
-     * @return
+     * @return cantidad de minutos utilizados durante la reserva.
      */
     private int calcularTiempoUso(LocalDateTime fechaInicio, LocalDateTime fechaApartado, LocalDateTime fechaFinal) {
         LocalDateTime inicioReal = fechaInicio != null ? fechaInicio : fechaApartado;

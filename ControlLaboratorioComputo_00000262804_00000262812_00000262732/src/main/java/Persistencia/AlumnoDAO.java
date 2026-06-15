@@ -32,11 +32,11 @@ public class AlumnoDAO implements IAlumnoDAO {
         this.conexion = conexion;
     }
     /**
-     * 
-     * @param idAlumno
-     * @param contrasena
-     * @return
-     * @throws PersistenciaException 
+     * Consulta las credenciales de un alumno en la base de datos.
+     * @param idAlumno Identificador de alumno que intenta inciar sesión.
+     * @param contrasena Contraseña ingresada por el alumno.
+     * @return Alumno encontrado con las credenciales recibidads.
+     * @throws PersistenciaException si ocurre un error al consultar la base de datos.
      */
     @Override
     public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
@@ -74,10 +74,10 @@ public class AlumnoDAO implements IAlumnoDAO {
         }
     }
     /**
-     * 
-     * @param filtro
-     * @return
-     * @throws PersistenciaException 
+     * Consulta los alumnos registrados aplicando un filtro de búsqueda.
+     * @param filtro texto utilizado para buscar coincidencias entre los alumnos.
+     * @return lista de alumnos que coinciden con el filtro indicado.
+     * @throws PersistenciaException si ocurre un error al consultar los alumnos en la base de datos.
      */
     @Override
     public List<Alumno> consultar(String filtro) throws PersistenciaException {
@@ -119,10 +119,10 @@ public class AlumnoDAO implements IAlumnoDAO {
         }
     }
     /**
-     * 
-     * @param idAlumno
-     * @return
-     * @throws PersistenciaException 
+     * Consulta un alumno específico mediante su identificador.
+     * @param idAlumno identificador del alumno que se desea consultar.
+     * @return alumno encontrado; null si no existe un alumno con ese identificador.
+     * @throws PersistenciaException si ocurre un error al consultar el alumno en la base de datos.
      */
     @Override
     public Alumno consultarAlumnoPorID(int idAlumno) throws PersistenciaException {
@@ -159,10 +159,10 @@ public class AlumnoDAO implements IAlumnoDAO {
         }
     }
     /**
-     * 
-     * @param idAlumno
-     * @return
-     * @throws PersistenciaException 
+     * Verifica si un alumno tiene un bloqueo activo.
+     * @param idAlumno identificador del alumno que se desea verificar.
+     * @return true si el alumno tiene un bloqueo activo; false si no tiene bloqueos activos.
+     * @throws PersistenciaException si ocurre un error al consultar los bloqueos del alumno en la base de datos.
      */
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
         String comandoSQL = """
