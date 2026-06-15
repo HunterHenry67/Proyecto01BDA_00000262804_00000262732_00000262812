@@ -31,6 +31,7 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     private javax.swing.Timer timerUso; 
     private int segundosTranscurridos = 0;
     
+    
     /**
      * Creates new form frmPantallaWindows
      */
@@ -39,19 +40,27 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     }
     
     
-    public frmPantallaWindows(String nombreAlumnoBD, Integer idReservaBD) {
+    public frmPantallaWindows(String nombreAlumnoBD, Integer idReserva) {
 //        this.setUndecorated(true);
         initComponents();
         
-        this.idReservaActual = idReservaBD;
+//        timerUso = new javax.swing.Timer(1000, e -> {
+//        segundosTranscurridos++;
+//        int minutos = segundosTranscurridos / 60;
+//        
+//        lblHorasUso.setText(minutos + " min");
+//        });
+//        timerUso.start();
+        
+        this.idReservaActual = idReserva;
         lblNombreUsuario.setText(nombreAlumnoBD);
         
-        // Pantalla completa y sin bordes
-//        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
-        
-        IConexionBD conexion = new ConexionBD();
-        this.reservaNegocio = new ReservaBO(new ReservaDAO(conexion));
+        try {
+            IConexionBD conexion = new ConexionBD();
+            this.reservaNegocio = new ReservaBO(new ReservaDAO(conexion));
+        } catch (Exception ex) {
+            System.err.println("Error de conexión: " + ex.getMessage());
+        }
         
         this.iniciarRelojes();
     }
@@ -349,6 +358,7 @@ public class frmPantallaWindows extends javax.swing.JFrame {
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
         // TODO add your handling code here:
+        System.out.println("¡Click detectado en el botón finalizar!");
         int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro que deseas finalizar tu sesión?", "Finalizar Sesión", JOptionPane.YES_NO_OPTION);
                 
         if (confirmacion == JOptionPane.YES_OPTION) {
