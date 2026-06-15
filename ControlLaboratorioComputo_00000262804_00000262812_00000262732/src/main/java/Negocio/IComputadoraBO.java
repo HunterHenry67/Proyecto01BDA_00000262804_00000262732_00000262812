@@ -8,12 +8,8 @@ import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
 import java.util.List;
 
-/**
- *
- * @author BALAMRUSH
- */
 public interface IComputadoraBO {
-    
+
     Computadora obtenerPCPorIP(String ip) throws NegocioException;
 
     Computadora validarEstatusPC(String ip) throws NegocioException;
@@ -21,6 +17,16 @@ public interface IComputadoraBO {
     Computadora validarComputadoraDisponible(Integer idComputadora) throws NegocioException;
 
     ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws NegocioException;
+
+    Computadora obtenerComputadoraPorNumero(int numeroMaquina) throws NegocioException;
+
+    void actualizarEstatus(int idComputadora, boolean estatus) throws NegocioException;
+
+    List<Computadora> obtenerMonitoreoEquipos(String busqueda, String filtro) throws NegocioException;
+
+    int contarMonitoreoEquipos(String busqueda, String filtro) throws NegocioException;
     
     List<Computadora> consultarComputadoras() throws NegocioException;
-}
+}   
+    
+

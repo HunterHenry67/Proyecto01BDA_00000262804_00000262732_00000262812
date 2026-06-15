@@ -6,18 +6,13 @@ package PresentacionProgramaAdministrador;
 
 import Entidades.Computadora;
 import Negocio.ICentroComputoBO;
+import Negocio.IComputadoraBO;
 import Negocio.NegocioException;
-import Persistencia.ConexionBD;
-import Persistencia.IConexionBD;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,18 +26,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 public class frmGestionEquipo extends JFrame {
 
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(frmGestionEquipo.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmGestionEquipo.class.getName());
 
     private final ICentroComputoBO centroComputoBO;
-    private final IConexionBD conexionBD;
+    private final IComputadoraBO computadoraBO;
 
     private final Map<Integer, Computadora> computadorasPorNumero = new HashMap<>();
     private final Map<JCheckBox, Integer> numeroPorCheckbox = new HashMap<>();
+
     private boolean actualizandoChecks = false;
+    private Timer timerActualizacion;
 
     private JCheckBox chk1;
     private JCheckBox chk2;
@@ -59,11 +56,12 @@ public class frmGestionEquipo extends JFrame {
     public frmGestionEquipo() {
         ControlFormsProgramaAdminstrador ctrl = ControlFormsProgramaAdminstrador.getInstance();
         this.centroComputoBO = ctrl.getCentroComputoBO();
-        this.conexionBD = new ConexionBD();
+        this.computadoraBO = ctrl.getComputadoraBO();
 
         initComponents();
         configurarCheckboxes();
         cargarEstatusComputadoras();
+        iniciarActualizacionAutomatica();
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
@@ -72,6 +70,13 @@ public class frmGestionEquipo extends JFrame {
         setTitle("Gestión de Equipo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(900, 600));
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                detenerTimer();
+            }
+        });
 
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(new Color(238, 238, 238));
@@ -105,24 +110,23 @@ public class frmGestionEquipo extends JFrame {
         panelMaquinas.setOpaque(false);
         panelMaquinas.setBorder(BorderFactory.createEmptyBorder(90, 80, 80, 80));
 
-        panelMaquinas.add(crearFilaMaquina("Maquina 1", chk1));
-        panelMaquinas.add(crearFilaMaquina("Maquina 6", chk6));
+        panelMaquinas.add(crearFilaMaquina("Máquina 1", chk1));
+        panelMaquinas.add(crearFilaMaquina("Máquina 6", chk6));
+        panelMaquinas.add(crearFilaMaquina("Máquina 2", chk2));
+        panelMaquinas.add(crearFilaMaquina("Máquina 7", chk7));
+        panelMaquinas.add(crearFilaMaquina("Máquina 3", chk3));
+        panelMaquinas.add(crearFilaMaquina("Máquina 8", chk8));
+        panelMaquinas.add(crearFilaMaquina("Máquina 4", chk4));
+        panelMaquinas.add(crearFilaMaquina("Máquina 9", chk9));
 
-        panelMaquinas.add(crearFilaMaquina("Maquina 2", chk2));
-        panelMaquinas.add(crearFilaMaquina("Maquina 7", chk7));
+        JPanel fila5 = crearFilaMaquina("Máquina 5", chk5);
 
-        panelMaquinas.add(crearFilaMaquina("Maquina 3", chk3));
-        panelMaquinas.add(crearFilaMaquina("Maquina 8", chk8));
-
-        panelMaquinas.add(crearFilaMaquina("Maquina 4", chk4));
-        panelMaquinas.add(crearFilaMaquina("Maquina 9", chk9));
-
-        JPanel fila5 = crearFilaMaquina("Maquina 5", chk5);
         JPanel panelRegresar = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelRegresar.setOpaque(false);
 
         btnRegresar = new JButton("Regresar");
         btnRegresar.addActionListener(e -> regresarMenu());
+
         panelRegresar.add(btnRegresar);
 
         panelMaquinas.add(panelRegresar);
@@ -164,6 +168,7 @@ public class frmGestionEquipo extends JFrame {
 
     private void registrarCheckbox(JCheckBox checkbox, int numeroMaquina) {
         numeroPorCheckbox.put(checkbox, numeroMaquina);
+
         checkbox.addActionListener(e -> procesarCambioEstatus((JCheckBox) e.getSource()));
     }
 
@@ -173,75 +178,34 @@ public class frmGestionEquipo extends JFrame {
 
         try {
             for (Map.Entry<JCheckBox, Integer> entry : numeroPorCheckbox.entrySet()) {
-                Computadora computadora = consultarComputadoraPorNumero(entry.getValue());
+                JCheckBox checkBox = entry.getKey();
+                int numeroMaquina = entry.getValue();
+
+                Computadora computadora = computadoraBO.obtenerComputadoraPorNumero(numeroMaquina);
 
                 if (computadora != null) {
-                    computadorasPorNumero.put(entry.getValue(), computadora);
+                    computadorasPorNumero.put(numeroMaquina, computadora);
                 }
 
-                // Checkbox marcado = bloqueada
-                // Checkbox desmarcado = desbloqueada
-                entry.getKey().setSelected(computadora != null && !computadora.isEstatus());
-                entry.getKey().setEnabled(computadora != null);
+                /*
+                 * Marcada = bloqueada
+                 * Desmarcada = desbloqueada/disponible
+                 */
+                checkBox.setSelected(computadora != null && !computadora.isEstatus());
+                checkBox.setEnabled(computadora != null);
             }
-        } catch (SQLException ex) {
+
+        } catch (NegocioException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(
+                    this,
                     "Error al consultar computadoras:\n" + ex.getMessage(),
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE
+            );
+
         } finally {
             actualizandoChecks = false;
-        }
-    }
-
-    private Computadora consultarComputadoraPorNumero(int numeroMaquina) throws SQLException {
-        String sql = """
-                     SELECT idComputadora,
-                            numeroMaquina,
-                            direccionIP,
-                            estatus,
-                            tipo,
-                            idCentroComputo
-                     FROM computadora
-                     WHERE numeroMaquina = ?
-                     """;
-
-        try (Connection conexion = conexionBD.crearConexion();
-             PreparedStatement statement = conexion.prepareStatement(sql)) {
-
-            statement.setInt(1, numeroMaquina);
-
-            try (ResultSet resultado = statement.executeQuery()) {
-                if (resultado.next()) {
-                    Computadora computadora = new Computadora();
-                    computadora.setIdComputadora(resultado.getInt("idComputadora"));
-                    computadora.setNumeroMaquina(resultado.getInt("numeroMaquina"));
-                    computadora.setIp(resultado.getString("direccionIP"));
-                    computadora.setEstatus(resultado.getBoolean("estatus"));
-                    computadora.setTipo(resultado.getString("tipo"));
-                    computadora.setIdCentroComputo(resultado.getInt("idCentroComputo"));
-                    return computadora;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private void actualizarEstatusComputadora(Integer idComputadora, boolean estatus) throws SQLException {
-        String sql = """
-                     UPDATE computadora
-                     SET estatus = ?
-                     WHERE idComputadora = ?
-                     """;
-
-        try (Connection conexion = conexionBD.crearConexion();
-             PreparedStatement statement = conexion.prepareStatement(sql)) {
-
-            statement.setBoolean(1, estatus);
-            statement.setInt(2, idComputadora);
-            statement.executeUpdate();
         }
     }
 
@@ -255,16 +219,20 @@ public class frmGestionEquipo extends JFrame {
 
         boolean checkboxMarcado = checkbox.isSelected();
 
-        // Marcado = bloquear = estatus false
-        // Desmarcado = desbloquear = estatus true
+        /*
+         * Si el checkbox está marcado, se bloquea la máquina.
+         * Si el checkbox está desmarcado, se desbloquea la máquina.
+         */
         boolean nuevoEstatus = !checkboxMarcado;
 
         if (computadora == null) {
             checkbox.setSelected(!checkboxMarcado);
-            JOptionPane.showMessageDialog(this,
-                    "No se encontro la maquina " + numeroMaquina + ".",
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se encontró la máquina " + numeroMaquina + ".",
                     "Aviso",
-                    JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 
@@ -274,34 +242,45 @@ public class frmGestionEquipo extends JFrame {
         }
 
         try {
-            actualizarEstatusComputadora(computadora.getIdComputadora(), nuevoEstatus);
+            computadoraBO.actualizarEstatus(computadora.getIdComputadora(), nuevoEstatus);
+
             computadora.setEstatus(nuevoEstatus);
 
             String accion = checkboxMarcado ? "bloqueada" : "desbloqueada";
 
-            JOptionPane.showMessageDialog(this,
-                    "Maquina " + numeroMaquina + " " + accion + " correctamente.",
-                    "Exito",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Máquina " + numeroMaquina + " " + accion + " correctamente.",
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
-        } catch (SQLException ex) {
+            cargarEstatusComputadoras();
+
+        } catch (NegocioException ex) {
             checkbox.setSelected(!checkboxMarcado);
+
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this,
-                    "Error al actualizar la maquina:\n" + ex.getMessage(),
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al actualizar la máquina:\n" + ex.getMessage(),
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
     private boolean solicitarContrasenaMaestra() {
         JPasswordField campoContrasena = new JPasswordField();
 
-        int opcion = JOptionPane.showConfirmDialog(this,
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
                 campoContrasena,
                 "Ingrese la contraseña maestra",
                 JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.PLAIN_MESSAGE
+        );
 
         if (opcion != JOptionPane.OK_OPTION) {
             return false;
@@ -315,47 +294,52 @@ public class frmGestionEquipo extends JFrame {
             boolean valida = centroComputoBO.validarContraseniaMaestra(contrasena);
 
             if (!valida) {
-                JOptionPane.showMessageDialog(this,
+                JOptionPane.showMessageDialog(
+                        this,
                         "Contraseña maestra incorrecta.",
                         "Acceso denegado",
-                        JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
 
             return valida;
 
         } catch (NegocioException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this,
+
+            JOptionPane.showMessageDialog(
+                    this,
                     "Error al validar contraseña maestra:\n" + ex.getMessage(),
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE
+            );
+
             return false;
         }
     }
 
+    private void iniciarActualizacionAutomatica() {
+        timerActualizacion = new Timer(5000, e -> cargarEstatusComputadoras());
+        timerActualizacion.start();
+    }
+
+    private void detenerTimer() {
+        if (timerActualizacion != null) {
+            timerActualizacion.stop();
+        }
+    }
+
     private void regresarMenu() {
+        detenerTimer();
+
         frmMenuGestion ventana = new frmMenuGestion();
         ventana.setVisible(true);
         ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         this.dispose();
     }
 
     public static void main(String[] args) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info :
-                    javax.swing.UIManager.getInstalledLookAndFeels()) {
-
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException |
-                 javax.swing.UnsupportedLookAndFeelException ex) {
-
-            logger.log(Level.SEVERE, null, ex);
-        }
-
         java.awt.EventQueue.invokeLater(() -> new frmGestionEquipo().setVisible(true));
     }
 }
