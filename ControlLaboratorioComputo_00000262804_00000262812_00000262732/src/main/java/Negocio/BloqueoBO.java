@@ -121,4 +121,8 @@ public class BloqueoBO implements IBloqueoBO {
             throw new NegocioException("El motivo del bloqueo no puede estar vacio.");
         }
     }
+
+    
+    
+    
 }

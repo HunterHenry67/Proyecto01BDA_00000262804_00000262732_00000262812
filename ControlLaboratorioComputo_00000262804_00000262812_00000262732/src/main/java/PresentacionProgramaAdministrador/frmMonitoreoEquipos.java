@@ -305,24 +305,23 @@ private void inicializarPantalla() {
                 try (ResultSet rs = psDatos.executeQuery()) {
                     while (rs.next()) {
                         // Se agregan los datos respetando estrictamente el orden del JTable:
-                        // [Maquina, ID, Nombre, Estado, Carrera, Unidad Academica, Centro, Apartado, Inicio, Fin]
                         modeloTabla.addRow(new Object[]{
-                            rs.getObject("numeroMaquina") != null ? rs.getInt("numeroMaquina") : "", // 1. Maquina
-                            rs.getInt("idAlumno"), // 2. ID
-                            rs.getString("nombreAlumno"), // 3. Nombre
-                            rs.getBoolean("estatusAlumno") ? "Activo" : "Inactivo", // 4. Estado
-                            valorONulo(rs.getString("carrera")), // 5. Carrera
-                            valorONulo(rs.getString("unidadAcademica")), // 6. Unidad Académica
-                            rs.getObject("idCentroComputo") != null ? rs.getInt("idCentroComputo") : "",// 7. Centro de Cómputo
-                            formatearFecha(rs.getTimestamp("fechaHoraApartado")), // 8. Hora Apartado
-                            formatearFecha(rs.getTimestamp("fechaHoraInicio")), // 9. Hora Inicio
-                            formatearFecha(rs.getTimestamp("fechaHoraFinal")) // 10. Hora Fin
+                            rs.getObject("numeroMaquina") != null ? rs.getInt("numeroMaquina") : "", 
+                            rs.getInt("idAlumno"), 
+                            rs.getString("nombreAlumno"), 
+                            rs.getBoolean("estatusAlumno") ? "Activo" : "Inactivo",
+                            valorONulo(rs.getString("carrera")), 
+                            valorONulo(rs.getString("unidadAcademica")), 
+                            rs.getObject("idCentroComputo") != null ? rs.getInt("idCentroComputo") : "",
+                            formatearFecha(rs.getTimestamp("fechaHoraApartado")), 
+                            formatearFecha(rs.getTimestamp("fechaHoraInicio")), 
+                            formatearFecha(rs.getTimestamp("fechaHoraFinal")) 
                         });
                     }
                 }
             }
 
-            // 3. Refrescar estado de botones y etiquetas de la paginación
+            //Refrescar estado de botones y etiquetas de la paginación
             actualizarBotonesPaginacion();
 
         } catch (SQLException ex) {
