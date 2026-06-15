@@ -26,28 +26,28 @@ public class BloqueoDAO implements IBloqueoDAO {
     public BloqueoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-
+    /**
+     * 
+     * @param bloqueo
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Bloqueo registrarBloqueo(Bloqueo bloqueo) throws PersistenciaException {
         String comandoSQL = """
                             INSERT INTO bloqueo (fechaHoraInicioBloqueo, fechaHoraFinBloqueo, motivo, idAlumno)
                             VALUES (?, ?, ?, ?)
                             """;
-
         try (Connection conn = this.conexion.crearConexion()) {
-
             try {
                 conn.setAutoCommit(false);
-
                 try (PreparedStatement statement = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
 
                     statement.setObject(1, bloqueo.getFechaHoraIncioBloqueo());
                     statement.setObject(2, bloqueo.getFechaHoraFinalBloqueo());
                     statement.setString(3, bloqueo.getMotivo());
                     statement.setInt(4, bloqueo.getIdAlumno());
-
                     int filasAfectadas = statement.executeUpdate();
-
                     if (filasAfectadas == 0) {
                         throw new SQLException("La inserción falló");
                     }
@@ -59,17 +59,20 @@ public class BloqueoDAO implements IBloqueoDAO {
                     conn.commit();
                     return bloqueo;
                 }
-
             } catch (SQLException ex) {
                 conn.rollback();
                 throw new PersistenciaException("Error al registrar bloqueo en bloqueoDAO " + ex.getMessage());
             }
-
         } catch (SQLException ex) {
             throw new PersistenciaException("Error en la conexion, no se pudo registrar el bloqueo: " + ex.getMessage());
         }
     }
-
+    
+    /**
+     * 
+     * @param idAlumno
+     * @throws PersistenciaException 
+     */
     @Override
     public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
         String comandoSQL = """
@@ -104,6 +107,12 @@ public class BloqueoDAO implements IBloqueoDAO {
         }
     }
 
+    /**
+     * 
+     * @param filtro
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<Bloqueo> consultar(String filtro) throws PersistenciaException {
         List<Bloqueo> listaBloqueosFiltrada = new ArrayList<>();
@@ -141,6 +150,11 @@ public class BloqueoDAO implements IBloqueoDAO {
         }
     }
 
+    /**
+     * 
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<Bloqueo> consultarBloqueosActivos() throws PersistenciaException {
         List<Bloqueo> listaBloqueos = new ArrayList<>();

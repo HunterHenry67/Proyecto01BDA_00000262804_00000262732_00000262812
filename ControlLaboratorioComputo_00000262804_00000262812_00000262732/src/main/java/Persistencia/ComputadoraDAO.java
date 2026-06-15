@@ -32,6 +32,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         this.conexion = conexion;
     }
 
+    /**
+     * 
+     * @param ip
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException {
         String sql = """
@@ -68,6 +74,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException {
         String sql = """
@@ -104,6 +116,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
 
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @param transaccion
+     * @throws PersistenciaException 
+     */
     @Override
     public void mostrarComputadoraComoDisponible(int idComputadora, Connection transaccion) throws PersistenciaException {
         String comandoSQL = """
@@ -123,6 +141,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         }
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -168,6 +192,11 @@ public class ComputadoraDAO implements IComputadoraDAO {
         }
     }
 
+    /**
+     * 
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<Computadora> consultarComputadoras() throws PersistenciaException {
         String sql = """

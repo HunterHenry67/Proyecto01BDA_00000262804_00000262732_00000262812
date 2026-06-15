@@ -21,6 +21,13 @@ public class CarreraDAO implements ICarreraDAO{
     public CarreraDAO(IConexionBD conexion){
         this.conexion = conexion;
     }
+    
+    /**
+     * 
+     * @param idCarrera
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Carrera consultarCarrera(int idCarrera) throws PersistenciaException {
         String comandoSQL = """
