@@ -13,15 +13,15 @@ import Persistencia.PersistenciaException;
  *
  * @author user
  */
-public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
+public class frmPantallaBloqueo extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PresentaciónProgramaBloqueadorPC.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmPantallaBloqueo.class.getName());
     private int idAlumnoReservaActual = -1;
     
     /**
      * Creates new form PresentaciónProgramaBloqueadorPC
      */
-    public PresentaciónProgramaBloqueadorPC() throws PersistenciaException {
+    public frmPantallaBloqueo() throws PersistenciaException {
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         this.setAlwaysOnTop(true);
@@ -297,9 +297,9 @@ public class PresentaciónProgramaBloqueadorPC extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             try {
-                new PresentaciónProgramaBloqueadorPC().setVisible(true);
+                new frmPantallaBloqueo().setVisible(true);
             } catch (PersistenciaException ex) {
-                System.getLogger(PresentaciónProgramaBloqueadorPC.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                System.getLogger(frmPantallaBloqueo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             }
         });
     }
