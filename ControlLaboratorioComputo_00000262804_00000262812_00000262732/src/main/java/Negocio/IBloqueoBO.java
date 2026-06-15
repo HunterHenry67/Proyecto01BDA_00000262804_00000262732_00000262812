@@ -22,4 +22,5 @@ public interface IBloqueoBO {
     List<Bloqueo> consultar(String filtro) throws NegocioException;
 
     List<Bloqueo> consultarBloqueosActivos() throws NegocioException;
+    
 }

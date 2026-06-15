@@ -1,6 +1,7 @@
 package PresentacionProgramaAdministrador;
 
 import Entidades.Alumno;
+import Entidades.Bloqueo;
 import Negocio.IAlumnoBO;
 import Negocio.IBloqueoBO;
 import Negocio.ICentroComputoBO;
@@ -137,34 +138,48 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
      * Muestra en la tabla la página actual de {@code listaCompleta}.
      */
     private void mostrarPagina() {
-        actualizandoTabla = true;
-        modeloTabla.setRowCount(0);
+    actualizandoTabla = true;
+    modeloTabla.setRowCount(0);
 
-        int inicio = paginaActual * REGISTROS_POR_PAGINA;
-        int fin    = Math.min(inicio + REGISTROS_POR_PAGINA, listaCompleta.size());
+    int inicio = paginaActual * REGISTROS_POR_PAGINA;
+    int fin = Math.min(inicio + REGISTROS_POR_PAGINA, listaCompleta.size());
 
-        for (int i = inicio; i < fin; i++) {
-            Alumno a = listaCompleta.get(i);
-            boolean bloqueado;
-            try {
-                bloqueado = alumnoBO.estaBloqueado(a.getIdAlumno());
-            } catch (NegocioException ex) {
-                bloqueado = false;
-            }
-            modeloTabla.addRow(new Object[]{
-                a.getIdAlumno(),
-                a.getNombres(),
-                a.getApellidoPaterno(),
-                a.getApellidoMaterno(),
-                a.isEstatus() ? "Activo" : "Inactivo",
-                bloqueado,
-                ""   // columna Motivo (solo informativa al bloquear)
-            });
-        }
-        actualizandoTabla = false;
+    List<Bloqueo> bloqueosActivos = new ArrayList<>();
 
-        actualizarBotonesPaginacion();
+    try {
+        bloqueosActivos = bloqueoBO.consultarBloqueosActivos();
+    } catch (NegocioException ex) {
+        logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
+
+    for (int i = inicio; i < fin; i++) {
+        Alumno a = listaCompleta.get(i);
+
+        boolean bloqueado = false;
+        String motivo = "";
+
+        for (Bloqueo bloqueo : bloqueosActivos) {
+            if (bloqueo.getIdAlumno() == a.getIdAlumno()) {
+            bloqueado = true;
+            motivo = bloqueo.getMotivo();
+            break;
+}
+        }
+
+        modeloTabla.addRow(new Object[]{
+            a.getIdAlumno(),
+            a.getNombres(),
+            a.getApellidoPaterno(),
+            a.getApellidoMaterno(),
+            a.isEstatus() ? "Activo" : "Inactivo",
+            bloqueado,
+            motivo
+        });
+    }
+
+    actualizandoTabla = false;
+    actualizarBotonesPaginacion();
+}
 
     private void actualizarBotonesPaginacion() {
         btnAnterior.setEnabled(paginaActual > 0);
