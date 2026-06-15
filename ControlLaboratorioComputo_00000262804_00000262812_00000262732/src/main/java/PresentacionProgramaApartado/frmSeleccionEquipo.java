@@ -5,12 +5,17 @@
 package PresentacionProgramaApartado;
 
 import Entidades.Alumno;
+import Entidades.Carrera;
+import Entidades.Computadora;
 import Entidades.Reserva;
+import Negocio.CarreraBO;
 import Negocio.ComputadoraBO;
+import Negocio.ICarreraBO;
 import Negocio.IComputadoraBO;
 import Negocio.IReservaBO;
 import Negocio.NegocioException;
 import Negocio.ReservaBO;
+import Persistencia.CarreraDAO;
 import Persistencia.ComputadoraDAO;
 import Persistencia.ConexionBD;
 import Persistencia.ReservaDAO;
@@ -18,6 +23,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.time.LocalTime;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -32,6 +38,8 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
     private Alumno alumno;
     private IComputadoraBO computadoraBO;
     private IReservaBO reservaBO;
+    private ICarreraBO carreraBO;
+    private Carrera carrera;
 
     public frmSeleccionEquipo() {
         initComponents();
@@ -61,6 +69,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         ConexionBD conexion = new ConexionBD();
         this.computadoraBO = new ComputadoraBO(new ComputadoraDAO(conexion));
         this.reservaBO = new ReservaBO(new ReservaDAO(conexion));
+        this.carreraBO = new CarreraBO(new CarreraDAO(conexion));
     }
 
     private void configurarPanelComputadoras() {
@@ -69,22 +78,18 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
     }
 
     private void cargarComputadoras() {
-        pnlComputadoras.removeAll();
-        for (int idComputadora = 1; idComputadora <= 9; idComputadora++) {
-            boolean bloqueada = this.computadoraBloqueada(idComputadora);
-            boolean apartada = this.computadoraApartada(idComputadora);
-            this.agregarComputadora(idComputadora, apartada, bloqueada);
-        }
-        pnlComputadoras.revalidate();
-        pnlComputadoras.repaint();
-    }
-
-    private boolean computadoraBloqueada(Integer idComputadora) {
         try {
-            this.computadoraBO.validarComputadoraDisponible(idComputadora);
-            return false;
+            pnlComputadoras.removeAll();
+            List<Computadora> computadoras = this.computadoraBO.consultarComputadoras();
+            for (Computadora computadora : computadoras) {
+                boolean bloqueada = !computadora.isEstatus();
+                boolean apartada = this.computadoraApartada(computadora.getIdComputadora());
+                this.agregarComputadora(computadora.getIdComputadora(), computadora.getNumeroMaquina(), apartada, bloqueada);
+            }
+            pnlComputadoras.revalidate();
+            pnlComputadoras.repaint();
         } catch (NegocioException ex) {
-            return true;
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al cargar computadoras", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -104,18 +109,15 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         }
     }
 
-    private void agregarComputadora(Integer idComputadora, boolean apartada, boolean bloqueada) {
+    private void agregarComputadora(Integer idComputadora, Integer numeroMaquina, boolean apartada, boolean bloqueada) {
         JButton btnComputadora = new JButton();
-
-        String numeroTexto = String.format("%02d", idComputadora);
-
+        String numeroTexto = String.format("%02d", numeroMaquina);
         btnComputadora.setText(numeroTexto);
         btnComputadora.setFont(new Font("Arial", Font.BOLD, 24));
         btnComputadora.setFocusPainted(false);
         btnComputadora.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnComputadora.setBackground(new Color(230, 230, 230));
         btnComputadora.setOpaque(true);
-
         if (bloqueada) {
             btnComputadora.setBorder(new LineBorder(new Color(90, 90, 90), 4, true));
             btnComputadora.setToolTipText("Computadora bloqueada o deshabilitada");
@@ -128,12 +130,15 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         }
         btnComputadora.addActionListener(e -> {
             if (bloqueada) {
-                JOptionPane.showMessageDialog(this, "La computadora " + numeroTexto + " está bloqueada o deshabilitada.", "Computadora no disponible", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "La computadora " + numeroTexto + " está bloqueada o deshabilitada.",
+                        "Computadora no disponible",
+                        JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             this.abrirInformacionEquipo(idComputadora, apartada);
         });
-
         this.pnlComputadoras.add(btnComputadora);
     }
 
@@ -148,20 +153,35 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
     }
 
     private void cargarDatosAlumno() {
-        if (this.alumno == null) {
-            return;
+        try {
+            if (this.alumno == null) {
+                return;
+            }
+            String nombreCompleto = this.alumno.getNombres()
+                    + " "
+                    + this.alumno.getApellidoPaterno()
+                    + " "
+                    + this.alumno.getApellidoMaterno();
+            this.lblNombreAlumno.setText(nombreCompleto);
+            this.lblIdAlumno.setText(String.format("%010d", this.alumno.getIdAlumno()));
+            this.carrera = this.carreraBO.consultarCarrera(this.alumno.getIdCarrera());
+            this.lblCarrera.setText(this.carrera.getNombre());
+            this.lblTiempoMaximo.setText(this.formatearTiempoDiario(this.carrera.getTiempoDiario()));
+            this.lblIconoReloj.setText("⏱");
+            this.lblTiempoActual.setText("00:00:00");
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al cargar datos del alumno", JOptionPane.ERROR_MESSAGE);
         }
-        String nombreCompleto = this.alumno.getNombres()
-                + " "
-                + this.alumno.getApellidoPaterno()
-                + " "
-                + this.alumno.getApellidoMaterno();
-        this.lblNombreAlumno.setText(nombreCompleto);
-        this.lblIdAlumno.setText(String.format("%010d", this.alumno.getIdAlumno()));
-        this.lblCarrera.setText("ISW");
-        this.lblTiempoMaximo.setText("4:00:00");     
-        this.lblIconoReloj.setText("⏱");
     }
+
+    private String formatearTiempoDiario(LocalTime tiempoDiario) {
+        if (tiempoDiario == null) {
+            return "00:00:00";
+        }
+        return tiempoDiario.toString();
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,6 +197,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         lblTiempoActual = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Selección de Equipo");
 
         txtTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtTitulo.setText("Centro de Apartado CISCO");

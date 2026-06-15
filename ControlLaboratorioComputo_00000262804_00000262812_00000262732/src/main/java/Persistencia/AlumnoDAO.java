@@ -31,7 +31,13 @@ public class AlumnoDAO implements IAlumnoDAO {
     public AlumnoDAO(IConexionBD conexion) {
         this.conexion = conexion;
     }
-
+    /**
+     * 
+     * @param idAlumno
+     * @param contrasena
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Alumno consultarCredenciales(int idAlumno, String contrasena) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -67,7 +73,12 @@ public class AlumnoDAO implements IAlumnoDAO {
             throw new PersistenciaException("Error al consultar las credenciales del alumno: " + ex.getMessage());
         }
     }
-
+    /**
+     * 
+     * @param filtro
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<Alumno> consultar(String filtro) throws PersistenciaException {
         List<Alumno> listaAlumnos = new ArrayList<>();
@@ -107,7 +118,12 @@ public class AlumnoDAO implements IAlumnoDAO {
             throw new PersistenciaException("Error al consultar los alumnos por filtro: " + ex.getMessage());
         }
     }
-
+    /**
+     * 
+     * @param idAlumno
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Alumno consultarAlumnoPorID(int idAlumno) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -142,7 +158,12 @@ public class AlumnoDAO implements IAlumnoDAO {
             throw new PersistenciaException("Error al consultar el alumno por ID: " + ex.getMessage());
         }
     }
-
+    /**
+     * 
+     * @param idAlumno
+     * @return
+     * @throws PersistenciaException 
+     */
     public boolean estaBloqueado(int idAlumno) throws PersistenciaException {
         String comandoSQL = """
                         SELECT COUNT(*) AS total

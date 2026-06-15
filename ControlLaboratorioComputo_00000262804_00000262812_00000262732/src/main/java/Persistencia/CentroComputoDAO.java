@@ -27,6 +27,12 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         this.conexion = conexion;
     }
 
+    /**
+     * 
+     * @param idCentroComputo
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public CentroComputo obtenerPorID(Integer idCentroComputo) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -53,6 +59,11 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         }
     }
 
+    /**
+     * 
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<CentroComputo> obtenerTodos() throws PersistenciaException {
         List<CentroComputo> lista = new ArrayList<>();
@@ -78,6 +89,12 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         }
     }
 
+    /**
+     * 
+     * @param idUnidadAcademica
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<CentroComputo> obtenerPorUnidadAcademica(Integer idUnidadAcademica) throws PersistenciaException {
         List<CentroComputo> lista = new ArrayList<>();
@@ -105,6 +122,12 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         }
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public CentroComputo obtenerPorComputadora(Integer idComputadora) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -132,6 +155,12 @@ public class CentroComputoDAO implements ICentroComputoDAO {
         }
     }
 
+    /**
+     * 
+     * @param contraseniaMaestra
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public boolean validarContraseniaMaestra(String contraseniaMaestra) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {

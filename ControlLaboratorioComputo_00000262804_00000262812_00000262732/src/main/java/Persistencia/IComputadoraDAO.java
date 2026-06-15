@@ -26,4 +26,9 @@ public interface IComputadoraDAO {
     List<Computadora> obtenerMonitoreoEquipos(String busqueda, String filtro) throws PersistenciaException;
     
     int contarMonitoreoEquipos(String busqueda, String filtro) throws PersistenciaException;
+    
+    List<Computadora> consultarComputadoras() throws PersistenciaException;
 }
+
+    
+

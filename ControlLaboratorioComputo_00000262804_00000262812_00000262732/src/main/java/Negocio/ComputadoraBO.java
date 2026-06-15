@@ -9,8 +9,11 @@ import Entidades.Computadora;
 import Persistencia.IComputadoraDAO;
 import Persistencia.PersistenciaException;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ComputadoraBO implements IComputadoraBO {
+
+    private static final Logger LOGGER = Logger.getLogger(ComputadoraBO.class.getName());
 
     private final IComputadoraDAO computadoraDAO;
 
@@ -28,6 +31,7 @@ public class ComputadoraBO implements IComputadoraBO {
             return computadoraDAO.obtenerPCPorIP(ip);
 
         } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
     }
@@ -63,6 +67,7 @@ public class ComputadoraBO implements IComputadoraBO {
             return computadora;
 
         } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
     }
@@ -77,6 +82,7 @@ public class ComputadoraBO implements IComputadoraBO {
             return computadoraDAO.obtenerCatalogoSoftwarePC(idComputadora);
 
         } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
     }
@@ -91,6 +97,7 @@ public class ComputadoraBO implements IComputadoraBO {
             return computadoraDAO.obtenerComputadoraPorNumero(numeroMaquina);
 
         } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
     }
@@ -105,6 +112,7 @@ public class ComputadoraBO implements IComputadoraBO {
             computadoraDAO.actualizarEstatus(idComputadora, estatus);
 
         } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
     }
@@ -112,19 +120,49 @@ public class ComputadoraBO implements IComputadoraBO {
     @Override
     public List<Computadora> obtenerMonitoreoEquipos(String busqueda, String filtro) throws NegocioException {
         try {
+            if (busqueda == null) {
+                busqueda = "";
+            }
+
+            if (filtro == null || filtro.isBlank()) {
+                filtro = "Todos";
+            }
+
             return computadoraDAO.obtenerMonitoreoEquipos(busqueda, filtro);
+
         } catch (PersistenciaException ex) {
-            throw new NegocioException(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException("Error al obtener monitoreo de equipos: " + ex.getMessage());
         }
     }
 
     @Override
     public int contarMonitoreoEquipos(String busqueda, String filtro) throws NegocioException {
         try {
+            if (busqueda == null) {
+                busqueda = "";
+            }
+
+            if (filtro == null || filtro.isBlank()) {
+                filtro = "Todos";
+            }
+
             return computadoraDAO.contarMonitoreoEquipos(busqueda, filtro);
 
         } catch (PersistenciaException ex) {
-            throw new NegocioException(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException("Error al contar monitoreo de equipos: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<Computadora> consultarComputadoras() throws NegocioException {
+        try {
+            return computadoraDAO.consultarComputadoras();
+
+        } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException("Error al consultar computadoras: " + ex.getMessage());
         }
     }
 }

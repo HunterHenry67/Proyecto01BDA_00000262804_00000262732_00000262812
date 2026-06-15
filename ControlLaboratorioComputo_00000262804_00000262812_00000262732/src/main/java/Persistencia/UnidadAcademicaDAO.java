@@ -91,6 +91,12 @@ public class UnidadAcademicaDAO implements IUnidadAcademicaDAO {
         this.conexion = conexion;
     }
 
+    /**
+     * 
+     * @param idUnidadAcademica
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public UnidadAcademica consultarUnidadAcademicaPorID(Integer idUnidadAcademica) throws PersistenciaException {
         try (Connection conexion = this.conexion.crearConexion()) {
@@ -117,6 +123,12 @@ public class UnidadAcademicaDAO implements IUnidadAcademicaDAO {
         }
     }
 
+    /**
+     * 
+     * @param filtro
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<UnidadAcademica> consultarUnidadesAcademicas(String filtro) throws PersistenciaException {
         List<UnidadAcademica> listaUnidadesAcademicas = new ArrayList<>();

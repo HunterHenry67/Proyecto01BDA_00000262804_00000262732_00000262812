@@ -27,6 +27,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         this.conexion = conexion;
     }
 
+    /**
+     * 
+     * @param ip
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Computadora obtenerPCPorIP(String ip) throws PersistenciaException {
         String sql = """
@@ -53,6 +59,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public Computadora mostrarComputadoraApartada(Integer idComputadora) throws PersistenciaException {
         String sql = """
@@ -80,6 +92,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         return null;
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @param transaccion
+     * @throws PersistenciaException 
+     */
     @Override
     public void mostrarComputadoraComoDisponible(int idComputadora, Connection transaccion) throws PersistenciaException {
         String sql = """
@@ -101,6 +119,12 @@ public class ComputadoraDAO implements IComputadoraDAO {
         }
     }
 
+    /**
+     * 
+     * @param idComputadora
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws PersistenciaException {
         String sql = """
@@ -336,4 +360,41 @@ public class ComputadoraDAO implements IComputadoraDAO {
         computadora.setIdCentroComputo(rs.getInt("idCentroComputo"));
         return computadora;
     }
+
+    /**
+     * 
+     * @return
+     * @throws PersistenciaException 
+     */
+    @Override
+    public List<Computadora> consultarComputadoras() throws PersistenciaException {
+        String sql = """
+                    SELECT idComputadora, 
+                            numeroMaquina, 
+                            direccionIP, 
+                            estatus, 
+                            tipo, 
+                            idCentroComputo
+                    FROM computadora
+                    ORDER BY numeroMaquina;
+                """;
+        List<Computadora> computadoras = new ArrayList<>();
+        try (Connection conn = this.conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Computadora pc = new Computadora();
+                pc.setIdComputadora(rs.getInt("idComputadora"));
+                pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
+                pc.setIp(rs.getString("direccionIP"));
+                pc.setEstatus(rs.getBoolean("estatus"));
+                pc.setTipo(rs.getString("tipo"));
+                pc.setIdCentroComputo(rs.getInt("idCentroComputo"));
+                computadoras.add(pc);
+            }
+            return computadoras;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar computadoras: " + ex.getMessage());
+        }
+    }
+
 }

@@ -298,6 +298,7 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
         lblNombreAlumno = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Información del Equipo");
 
         txtTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtTitulo.setText("Centro de Apartado CISCO");
@@ -463,7 +464,7 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMostrarSoftwareActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        frmSeleccionEquipo pantallaSeleccionEquipo = new frmSeleccionEquipo();
+        frmSeleccionEquipo pantallaSeleccionEquipo = new frmSeleccionEquipo(this.alumno);
         pantallaSeleccionEquipo.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed

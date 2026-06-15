@@ -26,6 +26,12 @@ public class SoftwareDAO implements ISoftwareDAO {
         this.conexion = conexion;
     }
 
+    /**
+     * 
+     * @param obtenerCatalogo
+     * @return
+     * @throws PersistenciaException 
+     */
     @Override
     public List<Software> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException {
 
@@ -42,7 +48,7 @@ public class SoftwareDAO implements ISoftwareDAO {
             """;
 
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
-            statement.setInt(1, obtenerCatalogo.getIdComputadora()); // ← usa tu DTO
+            statement.setInt(1, obtenerCatalogo.getIdComputadora()); 
 
             ResultSet resultado = statement.executeQuery();
             while (resultado.next()) {

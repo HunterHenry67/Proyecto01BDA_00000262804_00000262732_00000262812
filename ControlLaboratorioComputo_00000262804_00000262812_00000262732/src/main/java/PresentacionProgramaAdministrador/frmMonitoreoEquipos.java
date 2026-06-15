@@ -1,5 +1,6 @@
 package PresentacionProgramaAdministrador;
 
+import Entidades.Computadora;
 import Negocio.IComputadoraBO;
 import Negocio.NegocioException;
 import java.awt.Font;
@@ -234,44 +235,38 @@ public class frmMonitoreoEquipos extends javax.swing.JFrame {
     }
 
     private void cargarPagina() {
-        try {
-            modeloTabla.setRowCount(0);
+    try {
+        modeloTabla.setRowCount(0);
 
-            String busqueda = txtBusqueda.getText().trim();
-            String filtro = cboFiltro.getSelectedItem().toString();
+        String busqueda = txtBusqueda.getText().trim();
+        String filtro = cboFiltro.getSelectedItem().toString();
 
-            int offset = paginaActual * registrosPorPagina;
+        List<Computadora> computadoras = computadoraBO.obtenerMonitoreoEquipos(busqueda, filtro);
 
-            totalRegistros = computadoraBO.contarMonitoreoEquipos(busqueda, filtro);
-
-            List<Object[]> filas = computadoraBO.obtenerMonitoreoEquipos(
-                    busqueda,
-                    filtro,
-                    registrosPorPagina,
-                    offset
-            );
-
-            for (Object[] fila : filas) {
-                fila[7] = formatearFecha(fila[7]);
-                fila[8] = formatearFecha(fila[8]);
-                fila[9] = formatearFecha(fila[9]);
-
-                modeloTabla.addRow(fila);
-            }
-
-            actualizarBotones();
-
-        } catch (NegocioException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error al cargar monitoreo:\n" + ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+        for (Computadora c : computadoras) {
+            modeloTabla.addRow(new Object[]{
+                c.getNumeroMaquina(),
+                "N/A",
+                "N/A",
+                c.isEstatus() ? "Disponible" : "Bloqueada",
+                "N/A",
+                "N/A",
+                c.getIdCentroComputo(),
+                "N/A",
+                "N/A",
+                "N/A"
+            });
         }
+
+    } catch (NegocioException ex) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar monitoreo:\n" + ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
+}
 
     private String formatearFecha(Object fecha) {
         if (fecha == null) {

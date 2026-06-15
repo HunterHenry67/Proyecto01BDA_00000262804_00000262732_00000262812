@@ -25,4 +25,8 @@ public interface IComputadoraBO {
     List<Computadora> obtenerMonitoreoEquipos(String busqueda, String filtro) throws NegocioException;
 
     int contarMonitoreoEquipos(String busqueda, String filtro) throws NegocioException;
-}
+    
+    List<Computadora> consultarComputadoras() throws NegocioException;
+}   
+    
+

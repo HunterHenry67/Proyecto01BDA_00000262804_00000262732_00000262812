@@ -50,10 +50,10 @@ public class NewMain {
         probarFarme();
     }
 
-    static void probarFarme() throws PersistenciaException{
-        frmPantallaBloqueo prueba = new frmPantallaBloqueo();
-        prueba.setVisible(true);
-    }
+//    static void probarFarme() throws PersistenciaException{
+//        frmPantallaBloqueo prueba = new frmPantallaBloqueo();
+//        prueba.setVisible(true);
+//    }
     
     // =========================================================
     // ALUMNO DAO
@@ -446,10 +446,10 @@ public class NewMain {
         }
     }
     
-//    static void probarFarme(){
-//        frmPantallaPrincipal prueba = new frmPantallaPrincipal();
-//        prueba.setVisible(true);
-//    }
+    static void probarFarme(){
+        frmPantallaPrincipal prueba = new frmPantallaPrincipal();
+        prueba.setVisible(true);
+    }
     
     
 }

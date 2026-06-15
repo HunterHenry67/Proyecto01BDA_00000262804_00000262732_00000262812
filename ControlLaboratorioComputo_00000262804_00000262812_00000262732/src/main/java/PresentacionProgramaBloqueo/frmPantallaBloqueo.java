@@ -9,6 +9,7 @@ import Dtos.ComputadoraDTO;
 import Dtos.ReservaDTO;
 import Entidades.Alumno;
 import Entidades.Computadora;
+import Entidades.Reserva;
 import Negocio.IAlumnoBO;
 import Negocio.IReservaBO;
 import Negocio.NegocioException;
@@ -25,22 +26,42 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
     private IAlumnoBO alumnoNegocio;
     private Integer idAlumnoReservaActual = null;
     private IReservaBO reservaNegocio; 
-    
+    private Integer idDeEstaMaquinaFisica;
     private Integer idReservaActual = null;
     private java.time.LocalDateTime horaDeApartado = null;
+    
+    private javax.swing.Timer timerUso;
+    private int segundosUso = 0;
     
     private javax.swing.Timer timerActualizacion;
     private int segundosContador = 30;
     
    
-    public frmPantallaBloqueo() throws PersistenciaException {
-//        this.setUndecorated(true); 
+    public frmPantallaBloqueo() throws PersistenciaException { 
         initComponents();
-        // se extiende a toda la pantalla
-//        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         
-        this.setAlwaysOnTop(true);
+        timerUso = new javax.swing.Timer(1000, e -> {
+        segundosUso++;
+        // Aquí ajusta el nombre de tu etiqueta, ej: lblTiempoUso.setText(segundosUso + " s");
+        // lblTiempoUso.setText("Tiempo de uso: " + segundosUso + " segundos");
+        });
+        timerUso.start();
         
+        this.idDeEstaMaquinaFisica = 1;
+        lblNumeroPC.setText(String.format("%02d", idDeEstaMaquinaFisica));
+        
+        try{
+            Persistencia.IConexionBD conexion = new Persistencia.ConexionBD();
+            this.reservaNegocio = new Negocio.ReservaBO(new Persistencia.ReservaDAO(conexion));
+            this.alumnoNegocio = new Negocio.AlumnoBO(new Persistencia.AlumnoDAO(conexion));
+        
+        }catch (Exception ex) {
+            System.getLogger(frmPantallaBloqueo.class.getName()).log(System.Logger.Level.ERROR, "Error al conectar a BD", ex);
+        }
+        
+        // 2. Ocultamos los campos por defecto al arrancar
+        limpiarCamposADisponible();
+        consultarBaseDeDatos();
         this.iniciarMonitoreoPC();
     }
     
@@ -83,20 +104,38 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
     
     private void consultarBaseDeDatos() {
         try {
+            // 1. Reemplaza "consultarReservaActivaPC" por el nombre exacto 
+            // del método que tengas en tu interfaz IReservaBO.
+            // Le pasamos el número de la máquina física (ej. la PC 8)
+            Reserva reservaActiva = reservaNegocio.consultarReservaActivaPorComputadora(this.idDeEstaMaquinaFisica); 
             
-            Object reservaActiva = null; 
-            
+            // 2. Si el DAO no encontró nada, limpiamos todo a verde
             if (reservaActiva == null) {
                 limpiarCamposADisponible();
-            } else {
-                // Si alguien metió un INSERT en la tabla reserva para esta máquina:
-//                 idAlumnoReservaActual = reservaActiva.();
-//                 idReservaActual = reservaActiva.getIdReserva();
+            } 
+            // 3. ¡Si el DAO sí encontró la reserva, pintamos de rojo!
+            else {
+                this.idAlumnoReservaActual = reservaActiva.getIdAlumno();
+                this.idReservaActual = reservaActiva.getIdReserva();
                 
-                if (horaDeApartado == null) {
-                    horaDeApartado = java.time.LocalDateTime.now(); 
+                if (this.horaDeApartado == null) {
+                    this.horaDeApartado = java.time.LocalDateTime.now(); 
                 }
                 
+                // Actualizamos la interfaz
+                this.idAlumnoReservaActual = reservaActiva.getIdAlumno();
+                this.idReservaActual = reservaActiva.getIdReserva();
+
+                try {
+                    Alumno alumno = alumnoNegocio.consultarAlumnoPorID(this.idAlumnoReservaActual);
+                    if (alumno != null) {
+                        lblEstadoAlumno.setText(alumno.getNombres() + " " + alumno.getApellidoPaterno());
+                    } else {
+                        lblEstadoAlumno.setText("RESERVADO");
+                    }
+                } catch (NegocioException ex) {
+                    lblEstadoAlumno.setText("RESERVADO");
+                }
                 
                 lblNumeroPC.setForeground(java.awt.Color.RED); 
                 
@@ -104,8 +143,13 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
                 btnIngresar.setVisible(true);
                 lblContrasena.setVisible(true);
             }
+            
+        } catch (NegocioException ex) {
+            // Si tu regla de negocio lanza una excepción cuando no hay reservas,
+            // atrapamos el error aquí y forzamos el estado verde.
+            limpiarCamposADisponible();
         } catch (Exception e) {
-            System.getLogger(frmPantallaBloqueo.class.getName());
+            System.getLogger(frmPantallaBloqueo.class.getName()).log(System.Logger.Level.ERROR, "Error crítico", e);
         }
     }
     
@@ -406,7 +450,7 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
             
             javax.swing.JOptionPane.showMessageDialog(this, "¡Bienvenido, " + alumnoLogueado.getNombres() + "!", "Ingreso válido", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             
-            frmPantallaWindows relojWidget = new frmPantallaWindows();
+            frmPantallaWindows relojWidget = new frmPantallaWindows(alumnoLogueado.getNombres(), this.idReservaActual);
             relojWidget.setVisible(true);
             this.dispose(); 
             

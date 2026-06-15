@@ -21,6 +21,11 @@ public class ConexionBD implements IConexionBD{
     private final String PASSWORD = "Andreiy2006#";
     
 
+    /**
+     * 
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public Connection crearConexion() throws SQLException {
         Connection conexion = DriverManager.getConnection(URL, USER, PASSWORD);
