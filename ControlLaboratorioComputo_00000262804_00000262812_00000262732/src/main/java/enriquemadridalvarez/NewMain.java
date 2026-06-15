@@ -17,7 +17,8 @@ import Entidades.Reserva;
 import Entidades.Software;
 import Entidades.UnidadAcademica;
 import Persistencia.*;
-import PresentacionProgramaBloqueo.frmPantallaBloqueo;
+import PresentacionProgramaApartado.frmPantallaPrincipal;
+import PresentacionProgramaApartado.frmSeleccionEquipo;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,11 +36,9 @@ public class NewMain {
     static final String CONTRASENA_MAESTRA  = "admin123";
     static final String CONTRASENA_ALUMNO   = "pass123";
 
-    public static void main(String[] args) throws PersistenciaException {
-        IConexionBD conexion = new ConexionBD();
-
-        probarFarme();
-        
+    public static void main(String[] args) {
+//        IConexionBD conexion = new ConexionBD();
+//
 //        probarAlumnoDAO(conexion);
 //        probarBloqueoDAO(conexion);
 //        probarCentroComputoDAO(conexion);
@@ -47,6 +46,7 @@ public class NewMain {
 //        probarReservaDAO(conexion);
 //        probarSoftwareDAO(conexion);
 //        probarUnidadAcademicaDAO(conexion);
+        probarFarme();
     }
 
     static void probarFarme() throws PersistenciaException{
@@ -444,4 +444,11 @@ public class NewMain {
             System.out.println("[consultarUnidadesAcademicas] ERROR: " + e.getMessage());
         }
     }
+    
+    static void probarFarme(){
+        frmPantallaPrincipal prueba = new frmPantallaPrincipal();
+        prueba.setVisible(true);
+    }
+    
+    
 }
