@@ -18,7 +18,7 @@ public class ConexionBD implements IConexionBD{
     private final String BASEDATOS = "proyectocisco";
     private final String URL = "jdbc:mysql://" + SERVER + "/" + BASEDATOS;
     private final String USER = "root";
-    private final String PASSWORD = "Andreiy2006#";
+    private final String PASSWORD = "1234#";
     
 
     @Override
