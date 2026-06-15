@@ -168,4 +168,35 @@ public class ComputadoraDAO implements IComputadoraDAO {
         }
     }
 
+    @Override
+    public List<Computadora> consultarComputadoras() throws PersistenciaException {
+        String sql = """
+                    SELECT idComputadora, 
+                            numeroMaquina, 
+                            direccionIP, 
+                            estatus, 
+                            tipo, 
+                            idCentroComputo
+                    FROM computadora
+                    ORDER BY numeroMaquina;
+                """;
+        List<Computadora> computadoras = new ArrayList<>();
+        try (Connection conn = this.conexion.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Computadora pc = new Computadora();
+                pc.setIdComputadora(rs.getInt("idComputadora"));
+                pc.setNumeroMaquina(rs.getInt("numeroMaquina"));
+                pc.setIp(rs.getString("direccionIP"));
+                pc.setEstatus(rs.getBoolean("estatus"));
+                pc.setTipo(rs.getString("tipo"));
+                pc.setIdCentroComputo(rs.getInt("idCentroComputo"));
+                computadoras.add(pc);
+            }
+            return computadoras;
+        } catch (SQLException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new PersistenciaException("Error al consultar computadoras: " + ex.getMessage());
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ package Negocio;
 
 import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
+import java.util.List;
 
 /**
  *
@@ -20,4 +21,6 @@ public interface IComputadoraBO {
     Computadora validarComputadoraDisponible(Integer idComputadora) throws NegocioException;
 
     ComputadoraDTO obtenerCatalogoSoftwarePC(Integer idComputadora) throws NegocioException;
+    
+    List<Computadora> consultarComputadoras() throws NegocioException;
 }

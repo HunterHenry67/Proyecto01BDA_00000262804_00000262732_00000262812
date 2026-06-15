@@ -76,20 +76,19 @@ public class ReservaDAO implements IReservaDAO {
 
     @Override
     public Reserva consultarResrevaActivaPorAlumno(int idAlumno) throws PersistenciaException {
-        List<Reserva> listaReservasActivas = new ArrayList<>();
         try (Connection conexion = this.conexion.crearConexion()) {
+
             String comandoSQL = """
-                                SELECT 
-                                  idReserva,
-                                  fechaHoraApartado,
-                                  fechaHoraInicio,
-                                  fechaHoraFinal,
-                                  tiempoUso,
-                                  idAlumno,
-                                  idComputadora
-                              FROM reserva
-                              WHERE idAlumno = ?
-                                AND fechaHoraFinal IS NULL;
+                                    SELECT idReserva, 
+                                            fechaHoraApartado,  
+                                            fechaHoraInicio, 
+                                            fechaHoraFinal,
+                                            tiempoUso, 
+                                            idAlumno, 
+                                            idComputadora
+                                    FROM reserva
+                                    WHERE idAlumno = ?
+                                    AND fechaHoraFinal IS NULL;
                                 """;
             PreparedStatement statement = conexion.prepareStatement(comandoSQL);
             statement.setInt(1, idAlumno);
@@ -97,18 +96,20 @@ public class ReservaDAO implements IReservaDAO {
             if (resultado.next()) {
                 Timestamp fechaInicio = resultado.getTimestamp("fechaHoraInicio");
                 Timestamp fechaFinal = resultado.getTimestamp("fechaHoraFinal");
-                listaReservasActivas.add(new Reserva(resultado.getInt("idReserva"),
+                return new Reserva(
+                        resultado.getInt("idReserva"),
                         resultado.getTimestamp("fechaHoraApartado").toLocalDateTime(),
                         fechaInicio != null ? fechaInicio.toLocalDateTime() : null,
                         fechaFinal != null ? fechaFinal.toLocalDateTime() : null,
                         resultado.getObject("tiempoUso") != null ? resultado.getInt("tiempoUso") : null,
                         resultado.getInt("idAlumno"),
-                        resultado.getInt("idComputadora")));
+                        resultado.getInt("idComputadora")
+                );
             }
             return null;
         } catch (SQLException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new PersistenciaException("Error al consultar las reservas activas: " + ex.getMessage());
+            throw new PersistenciaException("Error al consultar la reserva activa del alumno: " + ex.getMessage());
         }
     }
 

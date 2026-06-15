@@ -8,6 +8,7 @@ import Dtos.ComputadoraDTO;
 import Entidades.Computadora;
 import Persistencia.IComputadoraDAO;
 import Persistencia.PersistenciaException;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -97,6 +98,16 @@ public class ComputadoraBO implements IComputadoraBO {
     private void validarIdComputadora(Integer idComputadora) throws NegocioException {
         if (idComputadora == null || idComputadora <= 0) {
             throw new NegocioException("El ID de la computadora no es valido.");
+        }
+    }
+
+    @Override
+    public List<Computadora> consultarComputadoras() throws NegocioException {
+        try {
+            return this.computadoraDAO.consultarComputadoras();
+        } catch (PersistenciaException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException("Error al consultar computadoras: " + ex.getMessage());
         }
     }
 }
