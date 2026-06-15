@@ -123,7 +123,10 @@ public class frmMenuGestion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnMonitoreoEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitoreoEquipoActionPerformed
-        // TODO add your handling code here:
+        frmMonitoreoEquipos ventana = new frmMonitoreoEquipos();
+        ventana.setVisible(true);
+        ventana.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        this.dispose();
     }//GEN-LAST:event_btnMonitoreoEquipoActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -131,11 +134,17 @@ public class frmMenuGestion extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnAlumnosBloqueadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlumnosBloqueadosActionPerformed
-        // TODO add your handling code here:
+        frmGestionAlumnos ventana = new frmGestionAlumnos();
+        ventana.setVisible(true);
+        ventana.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        this.dispose();
     }//GEN-LAST:event_btnAlumnosBloqueadosActionPerformed
 
     private void btnGestionEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionEquipoActionPerformed
-        // TODO add your handling code here:
+        frmGestionEquipo ventana = new frmGestionEquipo();
+        ventana.setVisible(true);
+        ventana.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        this.dispose();
     }//GEN-LAST:event_btnGestionEquipoActionPerformed
 
     /**

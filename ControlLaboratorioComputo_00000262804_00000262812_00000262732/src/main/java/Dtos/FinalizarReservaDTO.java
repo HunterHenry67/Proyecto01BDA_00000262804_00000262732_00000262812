@@ -14,9 +14,16 @@ public class FinalizarReservaDTO {
     private int idReserva;
     private LocalDateTime fechaHoraFinal;
 
+    public FinalizarReservaDTO() {
+    }
+
     public FinalizarReservaDTO(int idReserva, LocalDateTime fechaHoraFinal) {
         this.idReserva = idReserva;
         this.fechaHoraFinal = fechaHoraFinal;
+    }
+
+    public void setIdReserva(int idReserva) {
+        this.idReserva = idReserva;
     }
 
     public int getIdReserva() {
