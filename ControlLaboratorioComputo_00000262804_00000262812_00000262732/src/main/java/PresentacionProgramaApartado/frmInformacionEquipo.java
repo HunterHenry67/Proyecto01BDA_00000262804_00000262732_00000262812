@@ -197,7 +197,8 @@ public class frmInformacionEquipo extends javax.swing.JFrame {
             if (opcion != JOptionPane.YES_OPTION) {
                 return;
             }
-            GuardarReservaDTO reservaDTO = new GuardarReservaDTO(LocalDateTime.now(), null, null, null, this.alumno.getIdAlumno(), this.idComputadora);
+            LocalDateTime ahora = LocalDateTime.now();
+            GuardarReservaDTO reservaDTO = new GuardarReservaDTO(ahora, ahora, null, null, this.alumno.getIdAlumno(), this.idComputadora);
 
             Reserva reservaGuardada = this.reservaBO.guardar(reservaDTO);
 
