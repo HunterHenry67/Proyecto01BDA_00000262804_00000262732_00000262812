@@ -11,6 +11,7 @@ import Negocio.IAlumnoBO;
 import Negocio.IReservaBO;
 import Negocio.NegocioException;
 import Persistencia.PersistenciaException;
+import javax.swing.JFrame;
 
 /**
  *
@@ -35,10 +36,9 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
    
     public frmPantallaBloqueo() throws PersistenciaException { 
         initComponents();
-        
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         timerUso = new javax.swing.Timer(1000, e -> {
         segundosUso++;
-        
         });
         timerUso.start();
         
@@ -181,7 +181,6 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(204, 204, 204));
-        setUndecorated(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblTitulo.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
@@ -202,7 +201,7 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

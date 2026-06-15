@@ -15,8 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Andre
+ * Esta clase es la responsable de gestionar todas las operaciones de acceso a datos 
+ * relacionadas con la tabla de bloqueos en la base de datos. 
+ * Se encarga de ejecutar las consultas, inserciones y actualizaciones necesarias 
+ * para mantener el historial y el estado actual de los bloqueos de los alumnos.
+ * * @author Andre
  */
 public class BloqueoDAO implements IBloqueoDAO {
 
@@ -27,10 +30,16 @@ public class BloqueoDAO implements IBloqueoDAO {
         this.conexion = conexion;
     }
     /**
-     * 
-     * @param bloqueo
-     * @return
-     * @throws PersistenciaException 
+     * Registra un nuevo bloqueo en la base de datos
+     * Este método utiliza una transacción para garantizar la integridad de los datos
+     * Si la inserción se realiza correctamente, recupera automáticamente el id 
+     * de la base de datos y lo asigna al objeto agregado 
+     * En caso de error, realiza un rollback para revertir cambios.
+     * * @param bloqueo El objeto Bloqueo que contiene la información a registrar 
+     * (fecha de inicio, fecha de fin, motivo e ID del alumno).
+     * @return El mismo objeto Bloqueo con su identificador ID actualizado tras la inserción.
+     * @throws PersistenciaException Si ocurre un error en la conexión, una violación 
+     * de integridad en SQL o si la transacción falla.
      */
     @Override
     public Bloqueo registrarBloqueo(Bloqueo bloqueo) throws PersistenciaException {
@@ -69,9 +78,9 @@ public class BloqueoDAO implements IBloqueoDAO {
     }
     
     /**
-     * 
-     * @param idAlumno
-     * @throws PersistenciaException 
+     * Finaliza el bloqueo de un alumno marcando la hora actual como fin.
+     * @param idAlumno El ID del alumno que quieres desbloquear.
+     * @throws PersistenciaException Si no se encuentra el bloqueo o falla la base de datos.
      */
     @Override
     public void desbloquearAlumno(int idAlumno) throws PersistenciaException {
@@ -108,10 +117,12 @@ public class BloqueoDAO implements IBloqueoDAO {
     }
 
     /**
-     * 
-     * @param filtro
-     * @return
-     * @throws PersistenciaException 
+     * Busca bloqueos en la base de datos permitiendo aplicar un filtro de texto.
+     * Es ideal para cuando necesitas buscar bloqueos específicos basándote en la fecha de inicio/fin 
+     * o en el motivo escrito.
+     * * @param filtro El texto, fecha o fragmento que quieres utilizar para filtrar los resultados de búsqueda.
+     * @return Una lista con todos los objetos Bloqueo que coinciden con el criterio de búsqueda.
+     * @throws PersistenciaException Si hubo algún error técnico al realizar la consulta a la base de datos.
      */
     @Override
     public List<Bloqueo> consultar(String filtro) throws PersistenciaException {
@@ -151,9 +162,11 @@ public class BloqueoDAO implements IBloqueoDAO {
     }
 
     /**
-     * 
-     * @return
-     * @throws PersistenciaException 
+     * Recupera una lista completa de todos los bloqueos que están activos en este preciso momento.
+     * El sistema considera que un bloqueo está activo si la fecha de fin es posterior a la hora 
+     * actual o si todavía no se ha registrado una fecha de finalización.
+     * * @return Una lista con todos los objetos Bloqueo que se encuentran vigentes actualmente.
+     * @throws PersistenciaException Si ocurre un error de comunicación con la base de datos durante la consulta.
      */
     @Override
     public List<Bloqueo> consultarBloqueosActivos() throws PersistenciaException {

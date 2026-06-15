@@ -13,6 +13,7 @@ import Persistencia.IConexionBD;
 import Persistencia.PersistenciaException;
 import Persistencia.ReservaDAO;
 import java.time.LocalDateTime;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -37,16 +38,8 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     
     
     public frmPantallaWindows(String nombreAlumnoBD, Integer idReserva) {
-//        this.setUndecorated(true);
         initComponents();
-        
-//        timerUso = new javax.swing.Timer(1000, e -> {
-//        segundosTranscurridos++;
-//        int minutos = segundosTranscurridos / 60;
-//        
-//        lblHorasUso.setText(minutos + " min");
-//        });
-//        timerUso.start();
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         this.idReservaActual = idReserva;
         lblNombreUsuario.setText(nombreAlumnoBD);
