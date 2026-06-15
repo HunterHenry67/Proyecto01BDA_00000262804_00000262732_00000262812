@@ -27,10 +27,12 @@ public class SoftwareDAO implements ISoftwareDAO {
     }
 
     /**
-     * 
-     * @param obtenerCatalogo
-     * @return
-     * @throws PersistenciaException 
+     * Obtiene el catálogo de software instalado en una computadora específica.
+     * @param obtenerCatalogo DTO que contiene el identificador de la computadora
+     *                        de la cual se desea consultar el software instalado.
+     * @return lista de software instalado en la computadora indicada.
+     * @throws PersistenciaException si ocurre un error al consultar el catálogo
+     *                               de software en la base de datos.
      */
     @Override
     public List<Software> obtenerCatalogoSoftware(ObtenerCatalogoSoftwareDTO obtenerCatalogo) throws PersistenciaException {
