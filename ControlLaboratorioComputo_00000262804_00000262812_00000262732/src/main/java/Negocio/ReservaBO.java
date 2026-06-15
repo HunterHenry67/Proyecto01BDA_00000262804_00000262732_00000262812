@@ -181,4 +181,17 @@ public class ReservaBO implements IReservaBO {
             throw new NegocioException("El ID de la reserva no es valido.");
         }
     }
+
+    @Override
+    public Reserva consultarReservaActivaPorComputadora(Integer idComputadora) throws NegocioException {
+        try{
+            if(idComputadora == null || idComputadora <= 0){
+                throw new NegocioException("El ID de la computadora no es válido.");
+            }
+            return this.reservaDAO.consultarReservaActivaPorComputadora(idComputadora);
+        }catch(PersistenciaException ex){
+            LOGGER.severe(ex.getMessage());
+            throw new NegocioException(ex.getMessage());        
+        }
+    }
 }

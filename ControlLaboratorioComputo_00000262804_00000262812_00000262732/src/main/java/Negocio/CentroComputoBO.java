@@ -5,11 +5,8 @@
 package Negocio;
 
 import Entidades.CentroComputo;
-import Persistencia.CentroComputoDAO;
 import Persistencia.ICentroComputoDAO;
-import Persistencia.IConexionBD;
 import Persistencia.PersistenciaException;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.logging.Logger;

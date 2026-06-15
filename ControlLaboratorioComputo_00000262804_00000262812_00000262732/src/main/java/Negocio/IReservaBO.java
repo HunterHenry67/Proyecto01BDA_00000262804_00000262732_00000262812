@@ -27,4 +27,6 @@ public interface IReservaBO {
     List<Reserva> consultar(String filtro) throws NegocioException;
 
     List<Reserva> consultarReservasActivas() throws NegocioException;
+    
+    Reserva consultarReservaActivaPorComputadora(Integer idComputadora) throws NegocioException;
 }
