@@ -18,36 +18,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-/**
- * Formulario de Gestión de Alumnos (Programa Administrador).
- *
- * Permite:
- *  - Buscar / filtrar alumnos por distintos criterios.
- *  - Navegar el resultado en páginas.
- *  - Bloquear o desbloquear un alumno seleccionado en la tabla.
- */
+
 public class frmGestionAlumnos extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger =
             java.util.logging.Logger.getLogger(frmGestionAlumnos.class.getName());
 
-    // ---------- BOs ----------
+   
     private final IAlumnoBO alumnoBO;
     private final IBloqueoBO bloqueoBO;
     private final ICentroComputoBO centroComputoBO;
 
-    // ---------- Paginación ----------
+
     private List<Alumno> listaCompleta = new ArrayList<>();
     private int paginaActual = 0;
     private static final int REGISTROS_POR_PAGINA = 10;
 
-    // ---------- Modelo de tabla ----------
     private DefaultTableModel modeloTabla;
     private boolean actualizandoTabla = false;
 
-    // =========================================================
-    //  Constructor
-    // =========================================================
+    
     public frmGestionAlumnos() {
         ControlFormsProgramaAdminstrador ctrl = ControlFormsProgramaAdminstrador.getInstance();
         this.alumnoBO  = ctrl.getAlumnoBO();
@@ -61,9 +51,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         cargarAlumnos("");
     }
 
-    // =========================================================
-    //  Inicialización
-    // =========================================================
+    
     private void inicializarTabla() {
         modeloTabla = new DefaultTableModel(
                 new Object[]{"ID", "Nombre", "Apellido Paterno", "Apellido Materno", "Estado", "Bloquear", "Motivo"},
@@ -118,9 +106,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         });
     }
 
-    /**
-     * Carga todos los alumnos que coinciden con el filtro y muestra la primera página.
-     */
+    
     private void cargarAlumnos(String filtro) {
         try {
             listaCompleta = alumnoBO.consultar(filtro == null ? "" : filtro);
@@ -134,9 +120,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Muestra en la tabla la página actual de {@code listaCompleta}.
-     */
+  
     private void mostrarPagina() {
     actualizandoTabla = true;
     modeloTabla.setRowCount(0);
@@ -186,9 +170,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         btnSiguiente.setEnabled((paginaActual + 1) * REGISTROS_POR_PAGINA < listaCompleta.size());
     }
 
-    // =========================================================
-    //  Bloqueo / Desbloqueo
-    // =========================================================
+    
     private void accionBloqueoEnFilaSeleccionada() {
         int fila = tblAlumnos.getSelectedRow();
         if (fila < 0) {
@@ -201,7 +183,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         boolean bloqueado = Boolean.TRUE.equals(modeloTabla.getValueAt(fila, 5));
 
         if (bloqueado) {
-            // Desbloquear
+           
             int confirm = JOptionPane.showConfirmDialog(this,
                     "¿Desea desbloquear al alumno con ID " + idAlumno + "?",
                     "Confirmar Desbloqueo", JOptionPane.YES_NO_OPTION);
@@ -209,7 +191,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
                 desbloquearAlumno(idAlumno);
             }
         } else {
-            // Bloquear
+           
             if (!solicitarContrasenaMaestra()) {
                 return;
             }
@@ -318,10 +300,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Vuelve a ejecutar la búsqueda con el texto actual del campo de búsqueda
-     * y el filtro seleccionado, sin perder la posición de página.
-     */
+    
     private void refrescarFiltroActual() {
         String filtro = construirFiltroActual();
         try {
@@ -332,11 +311,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Construye el string de filtro según el campo txtBusqueda y el cboFiltro.
-     * El BO acepta un filtro libre; aquí enviamos el texto tal cual para que
-     * el DAO haga el filtrado por nombre, apellido, ID, etc.
-     */
+   
     private String construirFiltroActual() {
         String texto = txtBusqueda.getText().trim();
         String criterio = (String) cboFiltro.getSelectedItem();
@@ -348,9 +323,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         return texto;
     }
 
-    // =========================================================
-    //  Código generado por NetBeans (initComponents)
-    // =========================================================
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -484,10 +457,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // =========================================================
-    //  Event Handlers
-    // =========================================================
-
+  
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // botón de prueba heredado del diseño — sin acción
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -524,15 +494,13 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnRegresar1ActionPerformed
 
-    /** Búsqueda reactiva: se dispara al cambiar texto o combo. */
+   
     private void buscarEnTiempoReal() {
         String filtro = construirFiltroActual();
         cargarAlumnos(filtro);
     }
 
-    // =========================================================
-    //  main
-    // =========================================================
+   
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

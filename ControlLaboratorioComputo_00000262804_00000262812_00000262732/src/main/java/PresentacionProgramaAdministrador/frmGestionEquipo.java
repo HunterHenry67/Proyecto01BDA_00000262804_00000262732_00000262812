@@ -187,10 +187,7 @@ public class frmGestionEquipo extends JFrame {
                     computadorasPorNumero.put(numeroMaquina, computadora);
                 }
 
-                /*
-                 * Marcada = bloqueada
-                 * Desmarcada = desbloqueada/disponible
-                 */
+    
                 checkBox.setSelected(computadora != null && !computadora.isEstatus());
                 checkBox.setEnabled(computadora != null);
             }
@@ -219,10 +216,7 @@ public class frmGestionEquipo extends JFrame {
 
         boolean checkboxMarcado = checkbox.isSelected();
 
-        /*
-         * Si el checkbox está marcado, se bloquea la máquina.
-         * Si el checkbox está desmarcado, se desbloquea la máquina.
-         */
+       
         boolean nuevoEstatus = !checkboxMarcado;
 
         if (computadora == null) {
