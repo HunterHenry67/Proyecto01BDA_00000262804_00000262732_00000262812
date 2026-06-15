@@ -4,6 +4,7 @@
  */
 package PresentacionProgramaBloqueo;
 
+import Dtos.CancelarReservaDTO;
 import Dtos.ComputadoraDTO;
 import Dtos.ReservaDTO;
 import Entidades.Alumno;
@@ -33,10 +34,10 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
     
    
     public frmPantallaBloqueo() throws PersistenciaException {
-        this.setUndecorated(true); 
+//        this.setUndecorated(true); 
         initComponents();
         // se extiende a toda la pantalla
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         
         this.setAlwaysOnTop(true);
         
@@ -44,31 +45,25 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
     }
     
     private void iniciarMonitoreoPC() {
-        // Ejecuta la lógica cada 1 segundo para mover el contador visual "30 segundos"
         timerActualizacion = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 segundosContador--;
                 
-                // Actualiza tu label visual de la pantalla (lblTimerContador)
                 lblTimerContador.setText(segundosContador + " segundos");
                 
-                // --- REGLA DE LOS 10 MINUTOS DE ESPERA ---
                 if (horaDeApartado != null) {
                     java.time.Duration tiempoTranscurrido = java.time.Duration.between(horaDeApartado, java.time.LocalDateTime.now());
                     
-                    // Si pasaron más de 10 minutos (600 segundos) sin loguearse
                     if (tiempoTranscurrido.toSeconds() >= 600) {
                         try {
-                            // Cancelamos la reserva de la base de datos por inactividad
-                            // CancelarReservaDTO dto = new CancelarReservaDTO(idReservaActual);
-                            // reservaNegocio.cancelar(dto);
+                             CancelarReservaDTO dto = new CancelarReservaDTO(idReservaActual);
+                             reservaNegocio.cancelar(dto);
                             
                             javax.swing.JOptionPane.showMessageDialog(null, 
                                 "Tiempo límite de espera agotado (10 min).\nLa reservación ha sido cancelada.", 
                                 "Tiempo Agotado", javax.swing.JOptionPane.WARNING_MESSAGE);
                             
-                            // Forzamos un reinicio de la vista a disponible
                             limpiarCamposADisponible();
                             
                         } catch (Exception ex) {
@@ -77,9 +72,8 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
                     }
                 }
                 
-                // --- REGLA DE CONSULTA CADA 30 SEGUNDOS ---
                 if (segundosContador <= 0) {
-                    segundosContador = 30; // Reiniciamos el segundero visual
+                    segundosContador = 30; 
                     consultarBaseDeDatos();
                 }
             }
@@ -89,31 +83,23 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
     
     private void consultarBaseDeDatos() {
         try {
-            // Nota: Aquí le pasamos el ID de esta máquina física (ej. 8 por el "08")
-            // Deberías implementar en tu ReservaNegocio un método para buscar reserva activa por PC
-            // Reserva reservaActiva = reservaNegocio.consultarReservaActivaPorPC(8);
             
-            Object reservaActiva = null; // Reemplazar por la consulta real de tu Negocio
+            Object reservaActiva = null; 
             
             if (reservaActiva == null) {
-                // Si MySQL dice que no hay reservas vigentes para esta PC
                 limpiarCamposADisponible();
             } else {
                 // Si alguien metió un INSERT en la tabla reserva para esta máquina:
-                // idAlumnoReservaActual = reservaActiva.getIdAlumno();
-                // idReservaActual = reservaActiva.getIdReserva();
+//                 idAlumnoReservaActual = reservaActiva.();
+//                 idReservaActual = reservaActiva.getIdReserva();
                 
-                // Si es la primera vez que detecta el apartado, guarda la hora para el conteo de 10 min
                 if (horaDeApartado == null) {
-                    // horaDeApartado = reservaActiva.getFechaHoraApartado(); 
-                    horaDeApartado = java.time.LocalDateTime.now(); // Temporal
+                    horaDeApartado = java.time.LocalDateTime.now(); 
                 }
                 
-                // Cambiamos los textos usando tus variables
-                // lblEstadoAlumno.setText(reservaActiva.getNombreAlumno());
-                lblNumeroPC.setForeground(java.awt.Color.RED); // Borde/Letras en rojo
                 
-                // Habilitamos el login
+                lblNumeroPC.setForeground(java.awt.Color.RED); 
+                
                 JTextContrasena.setVisible(true);
                 btnIngresar.setVisible(true);
                 lblContrasena.setVisible(true);
@@ -129,9 +115,8 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
         this.horaDeApartado = null;
         
         lblEstadoAlumno.setText("DISPONIBLE");
-        lblNumeroPC.setForeground(java.awt.Color.GREEN); // Regresa a Verde
+        lblNumeroPC.setForeground(java.awt.Color.GREEN); 
         
-        // Ocultamos el login por seguridad
         JTextContrasena.setText("");
         JTextContrasena.setVisible(false);
         btnIngresar.setVisible(false);

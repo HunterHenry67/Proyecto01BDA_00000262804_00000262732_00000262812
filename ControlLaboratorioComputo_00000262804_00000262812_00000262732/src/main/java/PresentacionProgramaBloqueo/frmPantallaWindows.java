@@ -29,7 +29,6 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     private Integer idReservaActual;
     
     private javax.swing.Timer timerUso; 
-    private javax.swing.Timer timerReloj; 
     private int segundosTranscurridos = 0;
     
     /**
@@ -44,15 +43,13 @@ public class frmPantallaWindows extends javax.swing.JFrame {
 //        this.setUndecorated(true);
         initComponents();
         
-        // Asignamos los datos reales provenientes de la tabla de reservas/alumnos
         this.idReservaActual = idReservaBD;
         lblNombreUsuario.setText(nombreAlumnoBD);
         
-        // Candados de escritorio (Pantalla completa y sin bordes)
+        // Pantalla completa y sin bordes
 //        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         
-        // Inicialización de la capa de conexión y negocio real
         IConexionBD conexion = new ConexionBD();
         this.reservaNegocio = new ReservaBO(new ReservaDAO(conexion));
         
@@ -60,20 +57,6 @@ public class frmPantallaWindows extends javax.swing.JFrame {
     }
     
     private void iniciarRelojes() {
-        // Reloj del sistema (Actualiza escritorio central y barra inferior derecha)
-        timerReloj = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                LocalTime ahora = LocalTime.now();
-                DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm");
-                String horaActual = ahora.format(formato);
-                
-                lblRelojEscritorio.setText(horaActual);
-                lblRelojMini.setText(horaActual);
-            }
-        });
-        timerReloj.start();
-        
         timerUso = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -366,14 +349,11 @@ public class frmPantallaWindows extends javax.swing.JFrame {
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
         // TODO add your handling code here:
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
-                "¿Estás seguro que deseas finalizar tu sesión?", 
-                "Finalizar Sesión", JOptionPane.YES_NO_OPTION);
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro que deseas finalizar tu sesión?", "Finalizar Sesión", JOptionPane.YES_NO_OPTION);
                 
         if (confirmacion == JOptionPane.YES_OPTION) {
             try {
                 if (timerUso != null) timerUso.stop();
-                if (timerReloj != null) timerReloj.stop();
                 
                 FinalizarReservaDTO dto = new FinalizarReservaDTO();
                 dto.setIdReserva(this.idReservaActual);
@@ -381,21 +361,17 @@ public class frmPantallaWindows extends javax.swing.JFrame {
                 
                 reservaNegocio.finalizar(dto);
                 
-                JOptionPane.showMessageDialog(this, 
-                    "Sesión cerrada con éxito.\nTu tiempo de uso fue: " + lblHorasUso.getText(), 
-                    "¡Hasta pronto!", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Sesión cerrada con éxito.\nTu tiempo de uso fue: " + lblHorasUso.getText(), "¡Hasta pronto!", JOptionPane.INFORMATION_MESSAGE);
                 
                 frmPantallaBloqueo bloqueador = new frmPantallaBloqueo();
                 bloqueador.setVisible(true);
                 this.dispose(); 
                 
             } catch (NegocioException ex) { 
-                JOptionPane.showMessageDialog(this, 
-                    "Error al cerrar sesión: " + ex.getMessage(), 
-                    "Error de Conexión", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al cerrar sesión: " + ex.getMessage(), "Error de Conexión", JOptionPane.ERROR_MESSAGE);
                     
+                // Si falla, volvemos a arrancar el cronómetro
                 if (timerUso != null) timerUso.start();
-                if (timerReloj != null) timerReloj.start();
             } catch (PersistenciaException ex) {
                 System.getLogger(frmPantallaWindows.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             }
