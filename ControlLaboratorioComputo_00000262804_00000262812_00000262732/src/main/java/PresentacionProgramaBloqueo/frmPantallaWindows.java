@@ -105,6 +105,7 @@ public class frmPantallaWindows extends javax.swing.JFrame {
         jButton15 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Pantalla Windows ");
 
         jButton2.setBackground(new java.awt.Color(153, 153, 153));
         jButton2.setText("jButton2");

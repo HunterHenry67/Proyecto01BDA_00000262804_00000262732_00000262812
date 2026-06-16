@@ -353,6 +353,7 @@ public class frmGestionAlumnos extends javax.swing.JFrame {
         btnRegresar.addActionListener(this::btnRegresarActionPerformed);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Gestión Alumnos");
 
         txtTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtTitulo.setText("Panel de Administración");

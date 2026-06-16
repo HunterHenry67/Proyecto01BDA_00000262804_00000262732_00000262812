@@ -6,108 +6,145 @@ package PresentacionProgramaBloqueo;
 
 import Dtos.CancelarReservaDTO;
 import Entidades.Alumno;
+import Entidades.Computadora;
 import Entidades.Reserva;
+import Negocio.AlumnoBO;
+import Negocio.ComputadoraBO;
 import Negocio.IAlumnoBO;
+import Negocio.IComputadoraBO;
 import Negocio.IReservaBO;
 import Negocio.NegocioException;
+import Negocio.ReservaBO;
+import Persistencia.AlumnoDAO;
+import Persistencia.ComputadoraDAO;
+import Persistencia.ConexionBD;
+import Persistencia.IConexionBD;
 import Persistencia.PersistenciaException;
+import Persistencia.ReservaDAO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author user
  */
 public class frmPantallaBloqueo extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmPantallaBloqueo.class.getName());
     private IAlumnoBO alumnoNegocio;
     private Integer idAlumnoReservaActual = null;
-    private IReservaBO reservaNegocio; 
+    private IComputadoraBO computadoraNegocio;
+    private IReservaBO reservaNegocio;
     private Integer idDeEstaMaquinaFisica;
     private Integer idReservaActual = null;
     private java.time.LocalDateTime horaDeApartado = null;
-    
-    private javax.swing.Timer timerUso;
-    private int segundosUso = 0;
-    
+
+
     private javax.swing.Timer timerActualizacion;
     private int segundosContador = 30;
-    
-   
-    public frmPantallaBloqueo() throws PersistenciaException { 
+
+    public frmPantallaBloqueo() throws PersistenciaException {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        timerUso = new javax.swing.Timer(1000, e -> {
-        segundosUso++;
-        });
-        timerUso.start();
-        
-        this.idDeEstaMaquinaFisica = 1;
-        lblNumeroPC.setText(String.format("%02d", idDeEstaMaquinaFisica));
-        
-        try{
-            Persistencia.IConexionBD conexion = new Persistencia.ConexionBD();
-            this.reservaNegocio = new Negocio.ReservaBO(new Persistencia.ReservaDAO(conexion));
-            this.alumnoNegocio = new Negocio.AlumnoBO(new Persistencia.AlumnoDAO(conexion));
-        
-        }catch (Exception ex) {
-            System.getLogger(frmPantallaBloqueo.class.getName()).log(System.Logger.Level.ERROR, "Error al conectar a BD", ex);
+        limpiarCamposADisponible();
+    }
+
+    public frmPantallaBloqueo(Computadora computadoraActual) throws PersistenciaException {
+        initComponents();
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        inicializarNegocio();
+
+        if (computadoraActual == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se recibió información de la computadora.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
         }
+
+        this.idDeEstaMaquinaFisica = computadoraActual.getIdComputadora();
+
+        cargarDatosComputadora(computadoraActual);
+
         limpiarCamposADisponible();
         consultarBaseDeDatos();
-        this.iniciarMonitoreoPC();
+        iniciarMonitoreoPC();
     }
-    
+
+    private void inicializarNegocio() throws PersistenciaException {
+        try {
+            IConexionBD conexion = new ConexionBD();
+            this.reservaNegocio = new ReservaBO(new ReservaDAO(conexion));
+            this.alumnoNegocio = new AlumnoBO(new AlumnoDAO(conexion));
+            this.computadoraNegocio = new ComputadoraBO(new ComputadoraDAO(conexion));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudo conectar con la base de datos.\n" + ex.getMessage(),
+                    "Error de conexión",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            throw new PersistenciaException("Error al inicializar negocio: " + ex.getMessage());
+        }
+    }
+
+    private void cargarDatosComputadora(Computadora computadoraActual) {
+        lblNumeroPC.setText(String.format("%02d", computadoraActual.getNumeroMaquina()));
+        lblNombreLab.setText("CISCO");
+    }
+
     private void iniciarMonitoreoPC() {
         timerActualizacion = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 segundosContador--;
-                
+
                 lblTimerContador.setText(segundosContador + " segundos");
-                
+
                 if (horaDeApartado != null) {
                     java.time.Duration tiempoTranscurrido = java.time.Duration.between(horaDeApartado, java.time.LocalDateTime.now());
-                    
+
                     if (tiempoTranscurrido.toSeconds() >= 600) {
                         try {
-                             CancelarReservaDTO dto = new CancelarReservaDTO(idReservaActual);
-                             reservaNegocio.cancelar(dto);
-                            
-                            javax.swing.JOptionPane.showMessageDialog(null, 
-                                "Tiempo límite de espera agotado (10 min).\nLa reservación ha sido cancelada.", 
-                                "Tiempo Agotado", javax.swing.JOptionPane.WARNING_MESSAGE);
-                            
+                            CancelarReservaDTO dto = new CancelarReservaDTO(idReservaActual);
+                            reservaNegocio.cancelar(dto);
+
+                            javax.swing.JOptionPane.showMessageDialog(null,
+                                    "Tiempo límite de espera agotado (10 min).\nLa reservación ha sido cancelada.",
+                                    "Tiempo Agotado", javax.swing.JOptionPane.WARNING_MESSAGE);
+
                             limpiarCamposADisponible();
-                            
+
                         } catch (Exception ex) {
                             System.getLogger(frmPantallaBloqueo.class.getName());
                         }
                     }
                 }
-                
+
                 if (segundosContador <= 0) {
-                    segundosContador = 30; 
+                    segundosContador = 30;
                     consultarBaseDeDatos();
                 }
             }
         });
         timerActualizacion.start();
     }
-    
+
     private void consultarBaseDeDatos() {
-        try {          
-            Reserva reservaActiva = reservaNegocio.consultarReservaActivaPorComputadora(this.idDeEstaMaquinaFisica);       
+        try {
+            Reserva reservaActiva = reservaNegocio.consultarReservaActivaPorComputadora(this.idDeEstaMaquinaFisica);
             if (reservaActiva == null) {
                 limpiarCamposADisponible();
-            }       
-            else {
+            } else {
                 this.idAlumnoReservaActual = reservaActiva.getIdAlumno();
                 this.idReservaActual = reservaActiva.getIdReserva();
-                
+
                 if (this.horaDeApartado == null) {
-                    this.horaDeApartado = java.time.LocalDateTime.now(); 
-                }             
+                    this.horaDeApartado = java.time.LocalDateTime.now();
+                }
                 this.idAlumnoReservaActual = reservaActiva.getIdAlumno();
                 this.idReservaActual = reservaActiva.getIdReserva();
                 try {
@@ -119,35 +156,33 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
                     }
                 } catch (NegocioException ex) {
                     lblEstadoAlumno.setText("RESERVADO");
-                }               
-                lblNumeroPC.setForeground(java.awt.Color.RED); 
+                }
+                lblNumeroPC.setForeground(java.awt.Color.RED);
                 JTextContrasena.setVisible(true);
                 btnIngresar.setVisible(true);
                 lblContrasena.setVisible(true);
             }
-            
+
         } catch (NegocioException ex) {
             limpiarCamposADisponible();
         } catch (Exception e) {
             System.getLogger(frmPantallaBloqueo.class.getName()).log(System.Logger.Level.ERROR, "Error crítico", e);
         }
     }
-    
+
     private void limpiarCamposADisponible() {
         this.idAlumnoReservaActual = null;
         this.idReservaActual = null;
         this.horaDeApartado = null;
-        
+
         lblEstadoAlumno.setText("DISPONIBLE");
-        lblNumeroPC.setForeground(java.awt.Color.GREEN); 
-        
+        lblNumeroPC.setForeground(java.awt.Color.GREEN);
+
         JTextContrasena.setText("");
         JTextContrasena.setVisible(false);
         btnIngresar.setVisible(false);
         lblContrasena.setVisible(false);
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -180,6 +215,7 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
         btnIngresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Pantalla Bloqueo Principal");
         setBackground(new java.awt.Color(204, 204, 204));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -285,7 +321,7 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
                                 .addComponent(lblLaboratorio)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblNombreLab, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -416,33 +452,31 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
         // TODO add your handling code here:
-        
+
         try {
             if (this.idAlumnoReservaActual == null) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Esta computadora está DISPONIBLE, debes apartala primero para poder iniciar sesión", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-                return; 
+                return;
             }
 
             String contrasena = JTextContrasena.getText();
-            
+
             Alumno alumnoLogueado = alumnoNegocio.validarCredenciales(this.idAlumnoReservaActual, contrasena);
-            
+
             javax.swing.JOptionPane.showMessageDialog(this, "¡Bienvenido, " + alumnoLogueado.getNombres() + "!", "Ingreso válido", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            
+
             frmPantallaWindows relojWidget = new frmPantallaWindows(alumnoLogueado.getNombres(), this.idReservaActual);
             relojWidget.setVisible(true);
-            this.dispose(); 
-            
+            this.dispose();
+
         } catch (NegocioException ex) {
             javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage(), "Dato Incorrecto", javax.swing.JOptionPane.ERROR_MESSAGE);
-            
-            JTextContrasena.setText(""); 
+
+            JTextContrasena.setText("");
         }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
-   
-
-    public static void main(String args[]) {    
+    public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -467,19 +501,19 @@ public class frmPantallaBloqueo extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public void configurarEstadoPC(boolean estaDisponible, String nombreAlumno) {
         if (estaDisponible) {
             lblEstadoAlumno.setText("DISPONIBLE");
             lblNumeroPC.setForeground(java.awt.Color.GREEN);
-            
+
             JTextContrasena.setVisible(true);
             btnIngresar.setVisible(true);
-            lblContrasena.setVisible(true); 
+            lblContrasena.setVisible(true);
         } else {
             lblEstadoAlumno.setText(nombreAlumno);
-            lblNumeroPC.setForeground(java.awt.Color.RED); 
-            
+            lblNumeroPC.setForeground(java.awt.Color.RED);
+
             JTextContrasena.setVisible(true);
             btnIngresar.setVisible(true);
             lblContrasena.setVisible(true);

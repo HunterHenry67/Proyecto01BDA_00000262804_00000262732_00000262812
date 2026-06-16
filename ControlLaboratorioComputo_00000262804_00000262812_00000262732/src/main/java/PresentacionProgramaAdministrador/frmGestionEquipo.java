@@ -62,7 +62,7 @@ public class frmGestionEquipo extends JFrame {
         configurarCheckboxes();
         cargarEstatusComputadoras();
         iniciarActualizacionAutomatica();
-
+        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 

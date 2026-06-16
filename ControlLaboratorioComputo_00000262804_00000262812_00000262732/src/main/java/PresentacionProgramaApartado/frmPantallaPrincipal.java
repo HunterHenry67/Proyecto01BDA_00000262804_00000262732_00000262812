@@ -12,6 +12,7 @@ import Persistencia.AlumnoDAO;
 import Persistencia.ConexionBD;
 import Persistencia.PersistenciaException;
 import PresentacionProgramaApartado.PresentacionException;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,6 +48,8 @@ public class frmPantallaPrincipal extends javax.swing.JFrame {
         }
         return contrasena;
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

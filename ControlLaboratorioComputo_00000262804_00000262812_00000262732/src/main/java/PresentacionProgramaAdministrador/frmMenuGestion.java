@@ -45,6 +45,7 @@ public class frmMenuGestion extends javax.swing.JFrame {
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Menú Gestión");
 
         txtTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtTitulo.setText("Panel de Administración");
