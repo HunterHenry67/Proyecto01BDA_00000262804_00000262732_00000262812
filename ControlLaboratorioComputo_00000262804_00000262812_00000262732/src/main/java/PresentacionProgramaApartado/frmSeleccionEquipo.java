@@ -25,6 +25,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.time.LocalTime;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -35,13 +36,14 @@ import javax.swing.border.LineBorder;
  * @author BALAMRUSH
  */
 public class frmSeleccionEquipo extends javax.swing.JFrame {
+
     private Alumno alumno;
     private IComputadoraBO computadoraBO;
     private IReservaBO reservaBO;
     private ICarreraBO carreraBO;
     private Carrera carrera;
     private Timer timerActualizacion;
-    
+
     public frmSeleccionEquipo() {
         initComponents();
         this.prepararPantalla();
@@ -50,7 +52,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         this.cargarComputadoras();
         this.iniciarActualizacionAutomatica();
     }
-    
+
     public frmSeleccionEquipo(Alumno alumno) {
         initComponents();
         this.alumno = alumno;
@@ -77,8 +79,9 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
     }
 
     private void configurarPanelComputadoras() {
-        pnlComputadoras.setLayout(new GridLayout(0, 3, 100, 70));
-        pnlComputadoras.setBackground(new Color(220, 220, 220));
+        pnlComputadoras.setLayout(new GridLayout(0, 3, 30, 30));
+        pnlComputadoras.setBackground(new Color(245, 245, 245));
+        pnlComputadoras.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
     }
 
     private void cargarComputadoras() {
@@ -330,7 +333,7 @@ public class frmSeleccionEquipo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblCarrera;
     private javax.swing.JLabel lblIconoReloj;
